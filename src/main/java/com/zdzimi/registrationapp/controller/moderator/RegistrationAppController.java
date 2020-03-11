@@ -30,7 +30,7 @@ public class RegistrationAppController {
         Representative representative = initialObject.getRepresentative();
         Place place = initialObject.getPlace();
         institutionService.save(institution);
-        representative.setInstitution(institution);
+        representative.getWorkPlaces().add(institution);
         representativeService.save(representative);
         place.setInstitution(institution);
         placeService.save(place);

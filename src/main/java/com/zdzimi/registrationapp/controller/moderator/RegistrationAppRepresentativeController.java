@@ -33,7 +33,7 @@ public class RegistrationAppRepresentativeController {
     public Representative addRepresentative(@PathVariable String institutionName,
                                             @RequestBody Representative representative){
         Institution institution = institutionService.findInstitution(institutionName);
-        representative.setInstitution(institution);
+        representative.getWorkPlaces().add(institution);
         return representativeService.save(representative);
     }
 

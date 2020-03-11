@@ -32,12 +32,12 @@ public class RegistrationController {
         return representativeService.findRepresentatives(institution);
     }
 
-    @PostMapping("/{institutionName}")
-    public User createUser(@PathVariable String institutionName, @RequestBody User user){
-        Institution institution = institutionService.findInstitution(institutionName);
-        user.setInstitution(institution);
-        return userService.save(user);
-    }
+//    @PostMapping("/{institutionName}")
+//    public User createUser(@PathVariable String institutionName, @RequestBody User user){
+//        Institution institution = institutionService.findInstitution(institutionName);
+//        user.setInstitution(institution);
+//        return userService.save(user);
+//    }
 
     @GetMapping("/{institutionName}/{representativeUsername}")      // todo security
     public Set<MonthTimetable> showMonthTimetable(@PathVariable String institutionName,
