@@ -1,5 +1,7 @@
 package com.zdzimi.registrationapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -7,6 +9,7 @@ import java.util.Set;
 @Entity
 public class Representative extends User{
 
+    @JsonIgnore
     @ManyToMany
     private Set<Institution> workPlaces = new HashSet<>();
 
