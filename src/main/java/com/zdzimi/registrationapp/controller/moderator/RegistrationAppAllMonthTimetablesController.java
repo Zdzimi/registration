@@ -14,19 +14,19 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/registration-app/{institutionName}/representative/{representativeName}/timetables")
-public class RegistrationAppMonthTimetableController {
+public class RegistrationAppAllMonthTimetablesController {
 
     private InstitutionService institutionService;
     private RepresentativeService representativeService;
 
     @Autowired
-    public RegistrationAppMonthTimetableController(InstitutionService institutionService,
-                                                   RepresentativeService representativeService) {
+    public RegistrationAppAllMonthTimetablesController(InstitutionService institutionService,
+                                                       RepresentativeService representativeService) {
         this.institutionService = institutionService;
         this.representativeService = representativeService;
     }
 
-    @GetMapping
+    @GetMapping     // all timetables by representative
     public Set<MonthTimetable> showMonthTimetables(@PathVariable String institutionName,
                                                    @PathVariable String representativeName) {
         Institution institution = institutionService.findInstitution(institutionName);
