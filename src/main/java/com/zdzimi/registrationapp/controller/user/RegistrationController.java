@@ -29,20 +29,13 @@ public class RegistrationController {
     @GetMapping("/{institutionName}")
     public Set<Representative> showRepresentatives(@PathVariable String institutionName){
         Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentatives(institution);
+        return representativeService.findRepresentativesFromInstitution(institution);
     }
-
-//    @PostMapping("/{institutionName}")
-//    public User createUser(@PathVariable String institutionName, @RequestBody User user){
-//        Institution institution = institutionService.findInstitution(institutionName);
-//        user.setInstitution(institution);
-//        return userService.save(user);
-//    }
 
     @GetMapping("/{institutionName}/{representativeUsername}")      // todo security
     public Set<MonthTimetable> showMonthTimetable(@PathVariable String institutionName,
                                                   @PathVariable String representativeUsername){
         Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativeByName(institution, representativeUsername).getMonthTimetables();
+        return representativeService.findRepresentativeFromInstitutionByName(institution, representativeUsername).getMonthTimetables();
     }
 }

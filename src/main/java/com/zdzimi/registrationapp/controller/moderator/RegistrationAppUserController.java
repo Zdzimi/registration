@@ -28,13 +28,13 @@ public class RegistrationAppUserController {
     @GetMapping
     public Set<User> showUsers(@PathVariable String institutionName){
         Institution institution = institutionService.findInstitution(institutionName);
-        return userService.findUsers(institution);
+        return userService.findUsersFromInstitution(institution);
     }
 
     @GetMapping("/{username}")
     public User showUser(@PathVariable String institutionName,
                          @PathVariable String username){
         Institution institution = institutionService.findInstitution(institutionName);
-        return userService.findUserByName(institution, username);
+        return userService.findUserFromInstitutionByName(institution, username);
     }
 }

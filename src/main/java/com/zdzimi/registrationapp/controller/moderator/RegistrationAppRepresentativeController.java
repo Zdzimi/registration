@@ -26,7 +26,7 @@ public class RegistrationAppRepresentativeController {
     @GetMapping
     public Set<Representative> showRepresentatives(@PathVariable String institutionName){
         Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentatives(institution);
+        return representativeService.findRepresentativesFromInstitution(institution);
     }
 
     @PostMapping
@@ -41,6 +41,6 @@ public class RegistrationAppRepresentativeController {
     public Representative findRepresentative(@PathVariable String institutionName,
                                              @PathVariable String representativeName) {
         Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativeByName(institution, representativeName);
+        return representativeService.findRepresentativeFromInstitutionByName(institution, representativeName);
     }
 }

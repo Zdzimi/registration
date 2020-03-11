@@ -30,6 +30,6 @@ public class RegistrationAppAllMonthTimetablesController {
     public Set<MonthTimetable> showMonthTimetables(@PathVariable String institutionName,
                                                    @PathVariable String representativeName) {
         Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativeByName(institution,representativeName).getMonthTimetables();
+        return representativeService.findRepresentativeFromInstitutionByName(institution,representativeName).getMonthTimetables();
     }
 }

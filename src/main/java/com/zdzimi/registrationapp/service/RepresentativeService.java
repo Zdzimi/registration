@@ -7,6 +7,7 @@ import com.zdzimi.registrationapp.repository.RepresentativeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -19,14 +20,18 @@ public class RepresentativeService {
         this.representativeRepo = representativeRepo;
     }
 
-    public Set<Representative> findRepresentatives(Institution institution) {
+    public Set<Representative> findRepresentativesFromInstitution(Institution institution) {
         return institution.getRepresentatives();
     }
 
-    public Representative findRepresentativeByName(Institution institution, String representativeName) {
+    public Representative findRepresentativeFromInstitutionByName(Institution institution, String representativeName) {
         return institution.getRepresentatives().stream()
                 .filter(representative -> representative.getUsername().equals(representativeName))
                 .findAny().orElseThrow(()-> new RepresentativeNotFoundException(representativeName));
+    }
+
+    public List<Representative> findAllRepresentatives(){
+        return representativeRepo.findAll();
     }
 
     public Representative save(Representative representative) {

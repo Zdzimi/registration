@@ -7,6 +7,7 @@ import com.zdzimi.registrationapp.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -19,14 +20,22 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public Set<User> findUsers(Institution institution) {
+    public Set<User> findUsersFromInstitution(Institution institution) {
         return institution.getUsers();
     }
 
-    public User findUserByName(Institution institution, String username) {
+    public User findUserFromInstitutionByName(Institution institution, String username) {
         return institution.getUsers().stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findAny().orElseThrow(() -> new UserNotFoundException(username));
+    }
+
+    public User findUserByUsername(String username){
+        return userRepo.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+    }
+
+    public List<User> findAllUsers(){
+        return userRepo.findAll();
     }
 
     public User save(User user) {
