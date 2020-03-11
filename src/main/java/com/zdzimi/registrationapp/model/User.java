@@ -1,8 +1,8 @@
 package com.zdzimi.registrationapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -16,9 +16,8 @@ public class User {
     private String password;
     private Role role;
 
-    @JsonIgnore
-    @ManyToOne
-    private Institution institution;
+    @ManyToMany
+    private Set<Institution> institutions = new HashSet<>();
 
     public User() {
     }
@@ -28,14 +27,6 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
-    }
-
-    public User(String username, String email, String password, Role role, Institution institution) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.institution = institution;
     }
 
     public long getUserId() {
@@ -78,11 +69,11 @@ public class User {
         this.role = role;
     }
 
-    public Institution getInstitution() {
-        return institution;
+    public Set<Institution> getInstitutions() {
+        return institutions;
     }
 
-    public void setInstitution(Institution institution) {
-        this.institution = institution;
+    public void setInstitutions(Set<Institution> institutions) {
+        this.institutions = institutions;
     }
 }

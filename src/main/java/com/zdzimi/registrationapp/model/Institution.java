@@ -1,8 +1,7 @@
 package com.zdzimi.registrationapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,12 +12,14 @@ public class Institution {
     private long institutionId;
     private String institutionName;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "institution")
-    private Set<User> users;
+    @ManyToMany(mappedBy = "institutions")
+    private Set<User> users = new HashSet<>();
+
+    @ManyToMany(mappedBy = "workPlaces")
+    private Set<Representative> representatives = new HashSet<>();
 
     @OneToMany(mappedBy = "institution")
-    private Set<Place> places;
+    private Set<Place> places = new HashSet<>();
 
     public Institution() {
     }
@@ -49,6 +50,14 @@ public class Institution {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public Set<Representative> getRepresentatives() {
+        return representatives;
+    }
+
+    public void setRepresentatives(Set<Representative> representatives) {
+        this.representatives = representatives;
     }
 
     public Set<Place> getPlaces() {

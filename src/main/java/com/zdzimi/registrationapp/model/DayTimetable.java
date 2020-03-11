@@ -1,6 +1,7 @@
 package com.zdzimi.registrationapp.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -11,7 +12,7 @@ public class DayTimetable {
     private long dayTimetableId;
 
     @OneToMany(mappedBy = "dayTimetable")
-    private Set<Visit> visits;
+    private Set<Visit> visits = new HashSet<>();
 
     @ManyToOne
     private MonthTimetable monthTimetable;

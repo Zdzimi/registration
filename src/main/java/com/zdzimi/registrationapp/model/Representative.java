@@ -1,13 +1,17 @@
 package com.zdzimi.registrationapp.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 public class Representative extends User{
 
+    @ManyToMany
+    private Set<Institution> workPlaces = new HashSet<>();
+
     @OneToMany(mappedBy = "representative")
-    private Set<MonthTimetable> monthTimetables;
+    private Set<MonthTimetable> monthTimetables = new HashSet<>();
 
     public Representative() {
     }
@@ -16,8 +20,12 @@ public class Representative extends User{
         super(username, email, password, role);
     }
 
-    public Representative(String username, String email, String password, Role role, Institution institution) {
-        super(username, email, password, role, institution);
+    public Set<Institution> getWorkPlaces() {
+        return workPlaces;
+    }
+
+    public void setWorkPlaces(Set<Institution> workPlaces) {
+        this.workPlaces = workPlaces;
     }
 
     public Set<MonthTimetable> getMonthTimetables() {
