@@ -1,14 +1,15 @@
 package com.zdzimi.registrationapp.service;
 
+import com.zdzimi.registrationapp.comparator.UserComparator;
 import com.zdzimi.registrationapp.exception.RepresentativeNotFoundException;
-import com.zdzimi.registrationapp.model.Institution;
-import com.zdzimi.registrationapp.model.Representative;
+import com.zdzimi.registrationapp.model.entities.Institution;
+import com.zdzimi.registrationapp.model.entities.Representative;
 import com.zdzimi.registrationapp.repository.RepresentativeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RepresentativeService {
@@ -20,8 +21,10 @@ public class RepresentativeService {
         this.representativeRepo = representativeRepo;
     }
 
-    public Set<Representative> findRepresentativesFromInstitution(Institution institution) {
-        return institution.getRepresentatives();
+    public List<Representative> findRepresentativesFromInstitution(Institution institution) {
+        return institution.getRepresentatives().stream()
+                .sorted(new UserComparator())
+                .collect(Collectors.toList());
     }
 
     public Representative findRepresentativeFromInstitutionByName(Institution institution, String representativeName) {

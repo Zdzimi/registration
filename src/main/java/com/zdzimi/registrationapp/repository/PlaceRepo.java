@@ -1,6 +1,6 @@
 package com.zdzimi.registrationapp.repository;
 
-import com.zdzimi.registrationapp.model.Place;
+import com.zdzimi.registrationapp.model.entities.Place;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

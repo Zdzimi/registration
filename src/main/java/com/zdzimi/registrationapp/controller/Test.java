@@ -1,7 +1,7 @@
 package com.zdzimi.registrationapp.controller;
 
-import com.zdzimi.registrationapp.model.Representative;
-import com.zdzimi.registrationapp.model.User;
+import com.zdzimi.registrationapp.model.entities.Representative;
+import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.service.RepresentativeService;
 import com.zdzimi.registrationapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.zdzimi.registrationapp.security;
 
-import com.zdzimi.registrationapp.model.User;
+import com.zdzimi.registrationapp.model.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

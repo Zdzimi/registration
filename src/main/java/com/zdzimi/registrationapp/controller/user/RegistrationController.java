@@ -1,12 +1,15 @@
 package com.zdzimi.registrationapp.controller.user;
 
-import com.zdzimi.registrationapp.model.*;
+import com.zdzimi.registrationapp.model.entities.Institution;
+import com.zdzimi.registrationapp.model.entities.MonthTimetable;
+import com.zdzimi.registrationapp.model.entities.Representative;
 import com.zdzimi.registrationapp.service.InstitutionService;
 import com.zdzimi.registrationapp.service.RepresentativeService;
 import com.zdzimi.registrationapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -27,7 +30,7 @@ public class RegistrationController {
     }
 
     @GetMapping("/{institutionName}")
-    public Set<Representative> showRepresentatives(@PathVariable String institutionName){
+    public List<Representative> showRepresentatives(@PathVariable String institutionName){
         Institution institution = institutionService.findInstitution(institutionName);
         return representativeService.findRepresentativesFromInstitution(institution);
     }

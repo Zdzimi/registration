@@ -1,6 +1,6 @@
 package com.zdzimi.registrationapp.security;
 
-import com.zdzimi.registrationapp.model.User;
+import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

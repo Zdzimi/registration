@@ -1,9 +1,11 @@
-package com.zdzimi.registrationapp.model;
+package com.zdzimi.registrationapp.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zdzimi.registrationapp.model.Role;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -14,6 +16,7 @@ public class User {
     private long userId;
 
     private String username;
+    private String surname;
     private String email;
     private String password;
     private Role role;
@@ -25,8 +28,9 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email, String password, Role role) {
+    public User(String username, String surname, String email, String password, Role role) {
         this.username = username;
+        this.surname = surname;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -46,6 +50,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getEmail() {
@@ -78,5 +90,18 @@ public class User {
 
     public void setInstitutions(Set<Institution> institutions) {
         this.institutions = institutions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return getUserId() == user.getUserId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUserId());
     }
 }

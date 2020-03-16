@@ -1,7 +1,8 @@
-package com.zdzimi.registrationapp.model;
+package com.zdzimi.registrationapp.model.entities;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -66,5 +67,18 @@ public class Institution {
 
     public void setPlaces(Set<Place> places) {
         this.places = places;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Institution)) return false;
+        Institution that = (Institution) o;
+        return getInstitutionId() == that.getInstitutionId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getInstitutionId());
     }
 }

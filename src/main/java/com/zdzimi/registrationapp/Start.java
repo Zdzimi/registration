@@ -1,6 +1,10 @@
 //package com.zdzimi.registrationapp;
 //
 //import com.zdzimi.registrationapp.model.*;
+//import com.zdzimi.registrationapp.model.entities.Institution;
+//import com.zdzimi.registrationapp.model.entities.Place;
+//import com.zdzimi.registrationapp.model.entities.Representative;
+//import com.zdzimi.registrationapp.model.entities.User;
 //import com.zdzimi.registrationapp.repository.InstitutonRepo;
 //import com.zdzimi.registrationapp.repository.PlaceRepo;
 //import com.zdzimi.registrationapp.repository.RepresentativeRepo;
@@ -40,6 +44,7 @@
 //
 //        Representative jan = new Representative(
 //                "Jan",
+//                "Aron",
 //                "jan@jan.com",
 //                passwordEncoder.encode("jan123"),
 //                Role.ROLE_USER);
@@ -48,14 +53,16 @@
 //
 //        Representative michal = new Representative(
 //                "Michal",
+//                "Aron",
 //                "michal@michal.com",
 //                passwordEncoder.encode("michal123"),
-//                Role.ROLE_ADMIN);
+//                Role.ROLE_USER);
 //        michal.getWorkPlaces().add(institution);
 //        representativeRepo.save(michal);
 //
 //        User ula = new User(
 //                "Ula",
+//                "Zych",
 //                "ula@ula.com",
 //                passwordEncoder.encode("ula123"),
 //                Role.ROLE_USER);
@@ -64,13 +71,14 @@
 //
 //        User ala = new User(
 //                "Ala",
+//                "Zych",
 //                "ala@ala.com",
 //                passwordEncoder.encode("ala123"),
 //                Role.ROLE_USER);
 //        ala.getInstitutions().add(institution);
 //        userRepo.save(ala);
 //
-//        Place place = new Place("no_1", institution);
+//        Place place = new Place("no_10", institution);
 //        Place place2 = new Place("no_2", institution);
 //        placeRepo.save(place);
 //        placeRepo.save(place2);
@@ -81,7 +89,8 @@
 //        institutonRepo.save(institutionZ);
 //
 //        Representative janZ = new Representative(
-//                "JanZ",
+//                "Ola",
+//                "Jajko",
 //                "jan@jan.com",
 //                passwordEncoder.encode("jan123"),
 //                Role.ROLE_USER);
@@ -90,14 +99,16 @@
 //
 //        Representative michalZ = new Representative(
 //                "MichalZ",
+//                "Jajko",
 //                "michal@michal.com",
 //                passwordEncoder.encode("michal123"),
-//                Role.ROLE_ADMIN);
+//                Role.ROLE_USER);
 //        michalZ.getWorkPlaces().add(institutionZ);
 //        representativeRepo.save(michalZ);
 //
 //        User ulaZ = new User(
 //                "UlaZ",
+//                "Psikuta",
 //                "ula@ula.com",
 //                passwordEncoder.encode("ula123"),
 //                Role.ROLE_USER);
@@ -105,7 +116,8 @@
 //        userRepo.save(ulaZ);
 //
 //        User alaZ = new User(
-//                "AlaZ",
+//                "AlaW",
+//                "Psikuta",
 //                "ala@ala.com",
 //                passwordEncoder.encode("ala123"),
 //                Role.ROLE_USER);

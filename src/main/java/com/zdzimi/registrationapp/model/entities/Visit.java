@@ -1,7 +1,8 @@
-package com.zdzimi.registrationapp.model;
+package com.zdzimi.registrationapp.model.entities;
 
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.Objects;
 
 @Entity
 public class Visit {
@@ -64,5 +65,18 @@ public class Visit {
 
     public void setDayTimetable(DayTimetable dayTimetable) {
         this.dayTimetable = dayTimetable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Visit)) return false;
+        Visit visit = (Visit) o;
+        return getVisitId() == visit.getVisitId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getVisitId());
     }
 }

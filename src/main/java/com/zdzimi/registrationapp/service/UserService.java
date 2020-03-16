@@ -1,14 +1,15 @@
 package com.zdzimi.registrationapp.service;
 
+import com.zdzimi.registrationapp.comparator.UserComparator;
 import com.zdzimi.registrationapp.exception.UserNotFoundException;
-import com.zdzimi.registrationapp.model.Institution;
-import com.zdzimi.registrationapp.model.User;
+import com.zdzimi.registrationapp.model.entities.Institution;
+import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -20,8 +21,10 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public Set<User> findUsersFromInstitution(Institution institution) {
-        return institution.getUsers();
+    public List<User> findUsersFromInstitution(Institution institution) {
+        return institution.getUsers().stream()
+                .sorted(new UserComparator())
+                .collect(Collectors.toList());
     }
 
     public User findUserFromInstitutionByName(Institution institution, String username) {

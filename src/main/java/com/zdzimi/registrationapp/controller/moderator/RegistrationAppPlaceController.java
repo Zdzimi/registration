@@ -1,13 +1,13 @@
 package com.zdzimi.registrationapp.controller.moderator;
 
-import com.zdzimi.registrationapp.model.Institution;
-import com.zdzimi.registrationapp.model.Place;
+import com.zdzimi.registrationapp.model.entities.Institution;
+import com.zdzimi.registrationapp.model.entities.Place;
 import com.zdzimi.registrationapp.service.InstitutionService;
 import com.zdzimi.registrationapp.service.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/registration-app/{institutionName}/place")
@@ -24,8 +24,9 @@ public class RegistrationAppPlaceController {
     }
 
     @GetMapping
-    public Set<Place> showPlaces(@PathVariable String institutionName){
-        return institutionService.findInstitution(institutionName).getPlaces();
+    public List<Place> showPlaces(@PathVariable String institutionName){
+        Institution institution = institutionService.findInstitution(institutionName);
+        return placeService.findPlacesFromInstitution(institution);
     }
 
     @PostMapping

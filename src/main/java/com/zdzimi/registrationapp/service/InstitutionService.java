@@ -1,7 +1,7 @@
 package com.zdzimi.registrationapp.service;
 
 import com.zdzimi.registrationapp.exception.InstitutionNotFoundException;
-import com.zdzimi.registrationapp.model.Institution;
+import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.repository.InstitutonRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

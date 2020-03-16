@@ -1,7 +1,8 @@
-package com.zdzimi.registrationapp.model;
+package com.zdzimi.registrationapp.model.entities;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -12,7 +13,7 @@ public class MonthTimetable {
     private long timetableId;
 
     private int year;
-    private int mounth;
+    private int month;
 
     @OneToMany(mappedBy = "monthTimetable")
     private Set<DayTimetable> dayTimetableSet = new HashSet<>();
@@ -36,12 +37,12 @@ public class MonthTimetable {
         this.year = year;
     }
 
-    public int getMounth() {
-        return mounth;
+    public int getMonth() {
+        return month;
     }
 
-    public void setMounth(int mounth) {
-        this.mounth = mounth;
+    public void setMonth(int month) {
+        this.month = month;
     }
 
     public Set<DayTimetable> getDayTimetableSet() {
@@ -58,5 +59,18 @@ public class MonthTimetable {
 
     public void setRepresentative(Representative representative) {
         this.representative = representative;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MonthTimetable)) return false;
+        MonthTimetable that = (MonthTimetable) o;
+        return getTimetableId() == that.getTimetableId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTimetableId());
     }
 }

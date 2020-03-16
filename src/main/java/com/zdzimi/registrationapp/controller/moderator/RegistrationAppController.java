@@ -1,6 +1,9 @@
 package com.zdzimi.registrationapp.controller.moderator;
 
 import com.zdzimi.registrationapp.model.*;
+import com.zdzimi.registrationapp.model.entities.Institution;
+import com.zdzimi.registrationapp.model.entities.Place;
+import com.zdzimi.registrationapp.model.entities.Representative;
 import com.zdzimi.registrationapp.service.InstitutionService;
 import com.zdzimi.registrationapp.service.PlaceService;
 import com.zdzimi.registrationapp.service.RepresentativeService;
