@@ -22,6 +22,9 @@ public class Institution {
     @OneToMany(mappedBy = "institution")
     private Set<Place> places = new HashSet<>();
 
+    @OneToMany(mappedBy = "institution")
+    private Set<MonthTimetable> monthTimetables = new HashSet<>();
+
     public Institution() {
     }
 
@@ -67,6 +70,14 @@ public class Institution {
 
     public void setPlaces(Set<Place> places) {
         this.places = places;
+    }
+
+    public Set<MonthTimetable> getMonthTimetables() {
+        return monthTimetables;
+    }
+
+    public void setMonthTimetables(Set<MonthTimetable> monthTimetables) {
+        this.monthTimetables = monthTimetables;
     }
 
     @Override

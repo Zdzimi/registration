@@ -21,6 +21,9 @@ public class MonthTimetable {
     @ManyToOne
     private Representative representative;
 
+    @ManyToOne
+    private Institution institution;
+
     public long getTimetableId() {
         return timetableId;
     }
@@ -59,6 +62,14 @@ public class MonthTimetable {
 
     public void setRepresentative(Representative representative) {
         this.representative = representative;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 
     @Override

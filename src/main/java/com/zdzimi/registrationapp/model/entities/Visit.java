@@ -19,6 +19,9 @@ public class Visit {
     @ManyToOne
     private DayTimetable dayTimetable;
 
+    @ManyToOne
+    private Place place;
+
     public long getVisitId() {
         return visitId;
     }
@@ -65,6 +68,14 @@ public class Visit {
 
     public void setDayTimetable(DayTimetable dayTimetable) {
         this.dayTimetable = dayTimetable;
+    }
+
+    public Place getPlace() {
+        return place;
+    }
+
+    public void setPlace(Place place) {
+        this.place = place;
     }
 
     @Override

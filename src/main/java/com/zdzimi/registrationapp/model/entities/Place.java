@@ -3,7 +3,9 @@ package com.zdzimi.registrationapp.model.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Place {
@@ -16,6 +18,10 @@ public class Place {
     @JsonIgnore
     @ManyToOne
     private Institution institution;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "place")
+    private Set<Visit> visits = new HashSet<>();
 
     public Place() {
     }
@@ -47,6 +53,14 @@ public class Place {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+
+    public Set<Visit> getVisits() {
+        return visits;
+    }
+
+    public void setVisits(Set<Visit> visits) {
+        this.visits = visits;
     }
 
     @Override
