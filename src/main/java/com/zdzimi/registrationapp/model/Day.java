@@ -5,6 +5,7 @@ import java.time.LocalTime;
 public class Day {
 
     private int dayNumber;
+    private String placeName;
     private LocalTime tinmeStart;
     private LocalTime tinmeEnd;
 
@@ -17,6 +18,14 @@ public class Day {
 
     public int getDayNumber() {
         return dayNumber;
+    }
+
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
     }
 
     public void setDayNumber(int dayNumber) {
