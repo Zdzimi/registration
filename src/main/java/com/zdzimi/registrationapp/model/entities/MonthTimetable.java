@@ -1,5 +1,7 @@
 package com.zdzimi.registrationapp.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -18,11 +20,23 @@ public class MonthTimetable {
     @OneToMany(mappedBy = "monthTimetable")
     private Set<DayTimetable> dayTimetableSet = new HashSet<>();
 
+    @JsonIgnore
     @ManyToOne
     private Representative representative;
 
+    @JsonIgnore
     @ManyToOne
     private Institution institution;
+
+    public MonthTimetable() {
+    }
+
+    public MonthTimetable(int year, int month, Representative representative, Institution institution) {
+        this.year = year;
+        this.month = month;
+        this.representative = representative;
+        this.institution = institution;
+    }
 
     public long getTimetableId() {
         return timetableId;

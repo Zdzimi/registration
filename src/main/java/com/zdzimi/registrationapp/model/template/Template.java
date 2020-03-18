@@ -1,4 +1,4 @@
-package com.zdzimi.registrationapp.model;
+package com.zdzimi.registrationapp.model.template;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ public class Template {
 
     private YearAndMonth yearAndMonth;
     private List<Day> days;
+    private long visitTime;
 
     public Template() {
     }
@@ -29,5 +30,13 @@ public class Template {
 
     public void setDays(List<Day> days) {
         this.days = days;
+    }
+
+    public long getVisitTime() {
+        return visitTime;
+    }
+
+    public void setVisitTime(long visitTime) {
+        this.visitTime = visitTime;
     }
 }

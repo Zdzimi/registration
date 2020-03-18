@@ -1,11 +1,12 @@
 package com.zdzimi.registrationapp.service;
 
-import com.zdzimi.registrationapp.model.Day;
-import com.zdzimi.registrationapp.model.Template;
-import com.zdzimi.registrationapp.model.YearAndMonth;
+import com.zdzimi.registrationapp.model.template.Day;
+import com.zdzimi.registrationapp.model.template.Template;
+import com.zdzimi.registrationapp.model.template.YearAndMonth;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,8 @@ public class TemplateService {
         YearAndMonth yearAndMonth = new YearAndMonth(date.getYear(), date.getMonthValue());
         List<Day> days = new ArrayList<>();
         for (int i = dayOfMonth; i < length + 1; i++) {
-            days.add(new Day(i));
+//            days.add(new Day(i));
+            days.add(new Day(i, "no_10", LocalTime.of(10,00),LocalTime.of(18,00)));
         }
         return new Template(yearAndMonth, days);
     }

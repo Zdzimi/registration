@@ -1,4 +1,4 @@
-package com.zdzimi.registrationapp.model;
+package com.zdzimi.registrationapp.model.template;
 
 public class YearAndMonth {
 

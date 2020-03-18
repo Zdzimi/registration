@@ -14,7 +14,7 @@ public class VisitComparator implements Comparator<Visit> {
             compare = new DayTimetableComparator()
                     .compare(o1.getDayTimetable(), o2.getDayTimetable());
             if (compare == 0) {
-                compare = o1.getVisitTime().compareTo(o2.getVisitTime());
+                compare = o1.getVisitTimeStart().compareTo(o2.getVisitTimeStart());
             }
         }
         return compare;

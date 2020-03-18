@@ -1,5 +1,7 @@
 package com.zdzimi.registrationapp.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.Objects;
@@ -10,17 +12,31 @@ public class Visit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long visitId;
-    private LocalTime visitTime;
+    private LocalTime visitTimeStart;
+
+    @JsonIgnore
+    private long visitTimeLength;
 
     private String visitorsEmail;
     private String visitorsName;
     private String visitorsSurname;
 
+    @JsonIgnore
     @ManyToOne
     private DayTimetable dayTimetable;
 
     @ManyToOne
     private Place place;
+
+    public Visit() {
+    }
+
+    public Visit(LocalTime visitTimeStart, long visitTimeLength, DayTimetable dayTimetable, Place place) {
+        this.visitTimeStart = visitTimeStart;
+        this.visitTimeLength = visitTimeLength;
+        this.dayTimetable = dayTimetable;
+        this.place = place;
+    }
 
     public long getVisitId() {
         return visitId;
@@ -30,12 +46,20 @@ public class Visit {
         this.visitId = visitId;
     }
 
-    public LocalTime getVisitTime() {
-        return visitTime;
+    public LocalTime getVisitTimeStart() {
+        return visitTimeStart;
     }
 
-    public void setVisitTime(LocalTime visitTime) {
-        this.visitTime = visitTime;
+    public void setVisitTimeStart(LocalTime visitTimeStart) {
+        this.visitTimeStart = visitTimeStart;
+    }
+
+    public long getVisitTimeLength() {
+        return visitTimeLength;
+    }
+
+    public void setVisitTimeLength(long visitTimeLength) {
+        this.visitTimeLength = visitTimeLength;
     }
 
     public String getVisitorsEmail() {
