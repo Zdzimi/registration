@@ -1,44 +1,28 @@
 package com.zdzimi.registrationapp.controller.user;
 
-import com.zdzimi.registrationapp.model.entities.Institution;
-import com.zdzimi.registrationapp.model.entities.MonthTimetable;
-import com.zdzimi.registrationapp.model.entities.Representative;
-import com.zdzimi.registrationapp.service.InstitutionService;
-import com.zdzimi.registrationapp.service.RepresentativeService;
+import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/registration")
 public class RegistrationController {
 
-    private InstitutionService institutionService;
     private UserService userService;
-    private RepresentativeService representativeService;
 
     @Autowired
-    public RegistrationController(InstitutionService institutionService,
-                                  UserService userService,
-                                  RepresentativeService representativeService) {
-        this.institutionService = institutionService;
+    public RegistrationController(UserService userService) {
         this.userService = userService;
-        this.representativeService = representativeService;
     }
 
-    @GetMapping("/{institutionName}")
-    public List<Representative> showRepresentatives(@PathVariable String institutionName){
-        Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativesFromInstitution(institution);
+    @PostMapping
+    public User createNewUser(@RequestBody User user){
+        return userService.save(user);
     }
 
-    @GetMapping("/{institutionName}/{representativeUsername}")      // todo security
-    public Set<MonthTimetable> showMonthTimetable(@PathVariable String institutionName,
-                                                  @PathVariable String representativeUsername){
-        Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativeFromInstitutionByName(institution, representativeUsername).getMonthTimetables();
+    @GetMapping("/{username}")
+    public User showUser(@PathVariable String username) {
+        return userService.findUserByUsername(username);
     }
 }

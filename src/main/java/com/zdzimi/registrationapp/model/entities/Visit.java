@@ -17,9 +17,9 @@ public class Visit {
     @JsonIgnore
     private long visitTimeLength;
 
-    private String visitorsEmail;
-    private String visitorsName;
-    private String visitorsSurname;
+    @JsonIgnore
+    @ManyToOne
+    private User user;
 
     @JsonIgnore
     @ManyToOne
@@ -62,28 +62,12 @@ public class Visit {
         this.visitTimeLength = visitTimeLength;
     }
 
-    public String getVisitorsEmail() {
-        return visitorsEmail;
+    public User getUser() {
+        return user;
     }
 
-    public void setVisitorsEmail(String visitorsEmail) {
-        this.visitorsEmail = visitorsEmail;
-    }
-
-    public String getVisitorsName() {
-        return visitorsName;
-    }
-
-    public void setVisitorsName(String visitorsName) {
-        this.visitorsName = visitorsName;
-    }
-
-    public String getVisitorsSurname() {
-        return visitorsSurname;
-    }
-
-    public void setVisitorsSurname(String visitorsSurname) {
-        this.visitorsSurname = visitorsSurname;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public DayTimetable getDayTimetable() {

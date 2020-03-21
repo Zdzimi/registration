@@ -21,6 +21,9 @@ public class User {
     private String password;
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Visit> visits = new HashSet<>();
+
     @JsonIgnore
     @ManyToMany
     private Set<Institution> institutions = new HashSet<>();
@@ -82,6 +85,14 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Set<Visit> getVisits() {
+        return visits;
+    }
+
+    public void setVisits(Set<Visit> visits) {
+        this.visits = visits;
     }
 
     public Set<Institution> getInstitutions() {

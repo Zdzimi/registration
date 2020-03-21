@@ -42,7 +42,7 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findInstitution(institutionName);
         Representative representative = representativeService
                 .findRepresentativeFromInstitutionByName(institution, representativeName);
-        return monthTimetableService.findAllMonthTimetablesByRepresentative(representative);
+        return monthTimetableService.findAllByRepresentativeAndInstitution(representative, institution);
     }
 
     @GetMapping("/get-next-template")
@@ -51,7 +51,8 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findInstitution(institutionName);
         Representative representative = representativeService
                 .findRepresentativeFromInstitutionByName(institution, representativeName);
-        YearAndMonth yearAndMonth = monthTimetableService.findLastMonthTimetable(representative);
+        YearAndMonth yearAndMonth = monthTimetableService
+                .findLastMonthTimetableByRepresentativeAneInstitution(representative, institution);
         return templateService.getNextEmptyTemloate(yearAndMonth);
     }
 
@@ -73,7 +74,7 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findInstitution(institutionName);
         Representative representative = representativeService
                 .findRepresentativeFromInstitutionByName(institution, representativeName);
-        return monthTimetableService.findMonthTimetablesByRepresentativeAndYear(representative, year);
+        return monthTimetableService.findByRepresentativeInstitutionAndYear(representative, institution, year);
     }
 
     @GetMapping("/{year}/{month}")
@@ -84,7 +85,8 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findInstitution(institutionName);
         Representative representative = representativeService
                 .findRepresentativeFromInstitutionByName(institution, representativeName);
-        return monthTimetableService.findMonthTimetablesByYearAndMonthAndRepresentative(representative, year, month);
+        return monthTimetableService
+                .findByRepresentativeInstitutionYearAndMonth(representative, institution, year, month);
     }
 
     @GetMapping("/{year}/{month}/{day}")
@@ -94,8 +96,10 @@ public class RegistrationAppMonthTimetablesController {
                                          @PathVariable int month,
                                          @PathVariable int day) {
         Institution institution = institutionService.findInstitution(institutionName);
-        Representative representative = representativeService.findRepresentativeFromInstitutionByName(institution, representativeName);
-        MonthTimetable monthTimetable = monthTimetableService.findMonthTimetablesByYearAndMonthAndRepresentative(representative, year, month);
+        Representative representative = representativeService
+                .findRepresentativeFromInstitutionByName(institution, representativeName);
+        MonthTimetable monthTimetable = monthTimetableService
+                .findByRepresentativeInstitutionYearAndMonth(representative, institution, year, month);
         return dayTimetableService.findDayTimetable(monthTimetable, day);
     }
 }

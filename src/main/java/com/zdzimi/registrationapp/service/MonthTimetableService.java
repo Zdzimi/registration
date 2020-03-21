@@ -12,6 +12,7 @@ import com.zdzimi.registrationapp.repository.MonthTimetableRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,30 +29,38 @@ public class MonthTimetableService {
         this.dayTimetableService = dayTimetableService;
     }
 
-    public List<MonthTimetable> findAllMonthTimetablesByRepresentative(Representative representative) {
+    public List<MonthTimetable> findAllByRepresentativeAndInstitution(Representative representative,
+                                                                      Institution institution) {
         return representative.getMonthTimetables().stream()
+                .filter(monthTimetable -> monthTimetable.getInstitution().equals(institution))
                 .sorted(new MonthTimetableComparator())
                 .collect(Collectors.toList());
     }
 
-    public List<MonthTimetable> findMonthTimetablesByRepresentativeAndYear(Representative representative,
-                                                                          int year) {
+    public List<MonthTimetable> findByRepresentativeInstitutionAndYear(Representative representative,
+                                                                       Institution institution,
+                                                                       int year) {
         return representative.getMonthTimetables().stream()
+                .filter(monthTimetable -> monthTimetable.getInstitution().equals(institution))
                 .filter(m -> m.getYear() == year)
                 .sorted(new MonthTimetableComparator())
                 .collect(Collectors.toList());
     }
 
-    public MonthTimetable findMonthTimetablesByYearAndMonthAndRepresentative(Representative representative,
-                                                                                  int year,
-                                                                                  int month) {
+    public MonthTimetable findByRepresentativeInstitutionYearAndMonth(Representative representative,
+                                                                      Institution institution,
+                                                                      int year,
+                                                                      int month) {
         return representative.getMonthTimetables().stream()
+                .filter(monthTimetable -> monthTimetable.getInstitution().equals(institution))
                 .filter(m -> m.getYear() == year && m.getMonth() == month)
                 .findAny().orElseThrow(() -> new MonthTimetableNotFoundException(year, month));
     }
 
-    public YearAndMonth findLastMonthTimetable(Representative representative) {
+    public YearAndMonth findLastMonthTimetableByRepresentativeAneInstitution(Representative representative,
+                                                                             Institution institution) {
         Optional<MonthTimetable> monthTimetable = representative.getMonthTimetables().stream()
+                .filter(m -> m.getInstitution().equals(institution))
                 .max(new MonthTimetableComparator());
         if (monthTimetable.isPresent()){
             int year = monthTimetable.get().getYear();
@@ -73,9 +82,34 @@ public class MonthTimetableService {
         monthTimetableRepo.save(monthTimetable);
     }
 
-    private MonthTimetable createNewMonthTimetable(Institution institution, Representative representative, Template template) {
+    private MonthTimetable createNewMonthTimetable(Institution institution,
+                                                   Representative representative,
+                                                   Template template) {
         int year = template.getYearAndMonth().getYear();
         int month = template.getYearAndMonth().getMonth();
         return new MonthTimetable(year, month, representative, institution);
+    }
+
+    public List<MonthTimetable> findActualByRepresentativeAndInstitution(Representative representative,
+                                                                         Institution institution) {
+        LocalDate now = LocalDate.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+        return representative.getMonthTimetables().stream()
+                .filter(monthTimetable -> monthTimetable.getInstitution().equals(institution))
+                .filter(m -> m.getYear() >= year)
+                .dropWhile(m -> m.getYear() == year && m.getMonth() < month)
+                .collect(Collectors.toList());
+    }
+
+    public MonthTimetable findActualByRepresentativeInstitutionAndId(Representative representative,
+                                                                     Institution institution,
+                                                                     String yearMonth) {
+        String[] split = yearMonth.split("-");
+        int year = Integer.parseInt(split[0]);
+        int month = Integer.parseInt(split[1]);
+        return findActualByRepresentativeAndInstitution(representative, institution).stream()
+                .filter(m -> m.getYear() == year && m.getMonth() == month)
+                .findFirst().orElseThrow(() -> new MonthTimetableNotFoundException(year, month));
     }
 }

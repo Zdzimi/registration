@@ -1,16 +1,16 @@
 package com.zdzimi.registrationapp.service;
 
+import com.zdzimi.registrationapp.comparator.VisitComparator;
+import com.zdzimi.registrationapp.exception.VisitNotFoundException;
+import com.zdzimi.registrationapp.model.entities.*;
 import com.zdzimi.registrationapp.model.template.Day;
 import com.zdzimi.registrationapp.model.DayTimetableAndErrors;
-import com.zdzimi.registrationapp.model.entities.DayTimetable;
-import com.zdzimi.registrationapp.model.entities.Institution;
-import com.zdzimi.registrationapp.model.entities.Place;
-import com.zdzimi.registrationapp.model.entities.Visit;
 import com.zdzimi.registrationapp.repository.VisitRepo;
 import com.zdzimi.registrationapp.validator.BookPlaceValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,5 +66,43 @@ public class VisitService {
 
     private void save(Visit visit) {
         visitRepo.save(visit);
+    }
+
+    public List<Visit> findAllByUser(User user) {
+        return user.getVisits().stream().sorted(new VisitComparator()).collect(Collectors.toList());
+    }
+
+    public Visit findByUserAndId(User user, long visitId) {
+        return user.getVisits().stream()
+                .filter(visit -> visit.getVisitId() == visitId)
+                .findFirst().orElseThrow(() -> new VisitNotFoundException(visitId));
+    }
+
+    public Visit cancelVisit(User user, long visitId) {
+        Visit visit = findByUserAndId(user, visitId);
+        int dayOfMonth = visit.getDayTimetable().getDayOfMonth();
+        int month = visit.getDayTimetable().getMonthTimetable().getMonth();
+        int year = visit.getDayTimetable().getMonthTimetable().getYear();
+        LocalDate visitDate = LocalDate.of(year, month, dayOfMonth);
+        LocalDate now = LocalDate.now();
+        if (now.isBefore(visitDate)) {
+            visit.setUser(null);
+            return visitRepo.save(visit);       //  todo???
+        }
+        return null;
+    }
+
+    public Visit findByDayTimetableAndId(DayTimetable dayTimetable, long visitId) {
+        return dayTimetable.getVisits().stream()
+                .filter(visit -> visit.getVisitId() == visitId)
+                .findFirst().orElseThrow(() -> new VisitNotFoundException(visitId));
+    }
+
+    public Visit bookVisit(Visit visit, User user) {
+        if (visit.getUser() == null) {
+            visit.setUser(user);
+            return visitRepo.save(visit);
+        }
+        return visit;
     }
 }
