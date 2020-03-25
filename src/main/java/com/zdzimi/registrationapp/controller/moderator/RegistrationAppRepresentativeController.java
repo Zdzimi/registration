@@ -2,9 +2,9 @@ package com.zdzimi.registrationapp.controller.moderator;
 
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Representative;
-import com.zdzimi.registrationapp.service.InstitutionService;
-import com.zdzimi.registrationapp.service.RepresentativeService;
-import com.zdzimi.registrationapp.service.UserService;
+import com.zdzimi.registrationapp.service.entities.InstitutionService;
+import com.zdzimi.registrationapp.service.entities.RepresentativeService;
+import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +29,14 @@ public class RegistrationAppRepresentativeController {
 
     @GetMapping
     public List<Representative> showRepresentatives(@PathVariable String institutionName){
-        Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativesFromInstitution(institution);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        return representativeService.findByWorkPlaces(institution);
     }
 
     @PostMapping
     public Representative addRepresentative(@PathVariable String institutionName,
                                             @RequestBody String representativeName) {
-        Institution institution = institutionService.findInstitution(institutionName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = (Representative) userService.findUserByUsername(representativeName);
         representative.getWorkPlaces().add(institution);
         return representativeService.save(representative);
@@ -45,7 +45,7 @@ public class RegistrationAppRepresentativeController {
     @GetMapping("/{representativeName}")
     public Representative findRepresentative(@PathVariable String institutionName,
                                              @PathVariable String representativeName) {
-        Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativeFromInstitutionByName(institution, representativeName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        return representativeService.findByWorkPlacesAndUsername(institution, representativeName);
     }
 }

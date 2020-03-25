@@ -1,4 +1,4 @@
-package com.zdzimi.registrationapp.service;
+package com.zdzimi.registrationapp.service.entities;
 
 import com.zdzimi.registrationapp.exception.PlaceNotFoundException;
 import com.zdzimi.registrationapp.model.entities.Institution;
@@ -20,17 +20,16 @@ public class PlaceService {
         this.placeRepo = placeRepo;
     }
 
-    public Place findPlace(Institution institution, String placeName){
-        return institution.getPlaces().stream()
-                .filter(place -> place.getPlaceName().equals(placeName))
-                .findFirst().orElseThrow(() -> new PlaceNotFoundException(placeName));
+    public Place findByInstitutionAndPlaceName(Institution institution, String placeName) {
+        return placeRepo.findByInstitutionAndPlaceName(institution, placeName)
+                .orElseThrow(() -> new PlaceNotFoundException(placeName));
+    }
+
+    public List<Place> findByInstitution(Institution institution) {
+        return placeRepo.findByInstitution(institution);
     }
 
     public Place save(Place place) {
         return placeRepo.save(place);
-    }
-
-    public List<Place> findPlacesFromInstitution(Institution institution) {
-        return new ArrayList<>(institution.getPlaces());
     }
 }

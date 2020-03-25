@@ -2,8 +2,8 @@ package com.zdzimi.registrationapp.controller.moderator;
 
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Place;
-import com.zdzimi.registrationapp.service.InstitutionService;
-import com.zdzimi.registrationapp.service.PlaceService;
+import com.zdzimi.registrationapp.service.entities.InstitutionService;
+import com.zdzimi.registrationapp.service.entities.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +25,13 @@ public class RegistrationAppPlaceController {
 
     @GetMapping
     public List<Place> showPlaces(@PathVariable String institutionName){
-        Institution institution = institutionService.findInstitution(institutionName);
-        return placeService.findPlacesFromInstitution(institution);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        return placeService.findByInstitution(institution);
     }
 
     @PostMapping
     public Place addPlace(@PathVariable String institutionName, @RequestBody Place place){
-        Institution institution = institutionService.findInstitution(institutionName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
         place.setInstitution(institution);
         return placeService.save(place);
     }
@@ -39,8 +39,8 @@ public class RegistrationAppPlaceController {
     @GetMapping("/{placeName}")
     public Place showPlace(@PathVariable String institutionName,
                            @PathVariable String placeName){
-        Institution institution = institutionService.findInstitution(institutionName);
-        return placeService.findPlace(institution, placeName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        return placeService.findByInstitutionAndPlaceName(institution, placeName);
     }
 
 }

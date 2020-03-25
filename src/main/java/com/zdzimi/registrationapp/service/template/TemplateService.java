@@ -1,4 +1,4 @@
-package com.zdzimi.registrationapp.service;
+package com.zdzimi.registrationapp.service.template;
 
 import com.zdzimi.registrationapp.model.template.Day;
 import com.zdzimi.registrationapp.model.template.Template;
@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class TemplateService {
 
-    public Template getNextEmptyTemloate(YearAndMonth yearAndMonth) {
+    public Template getNextEmptyTemplate(YearAndMonth yearAndMonth) {
         LocalDate date = LocalDate.now();
         if(yearAndMonth != null){
             LocalDate nextDate = LocalDate.of(yearAndMonth.getYear(),yearAndMonth.getMonth(),1).plusMonths(1);

@@ -2,8 +2,8 @@ package com.zdzimi.registrationapp.controller.user;
 
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Representative;
-import com.zdzimi.registrationapp.service.InstitutionService;
-import com.zdzimi.registrationapp.service.RepresentativeService;
+import com.zdzimi.registrationapp.service.entities.InstitutionService;
+import com.zdzimi.registrationapp.service.entities.RepresentativeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,14 +28,14 @@ public class RegistrationRepresentatives {
 
     @GetMapping
     public List<Representative> showRepresentatives(@PathVariable String institutionName) {
-        Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativesFromInstitution(institution);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        return representativeService.findByWorkPlaces(institution);
     }
 
     @GetMapping("/{representativeName}")
     public Representative showRepresentative(@PathVariable String institutionName,
                                              @PathVariable String representativeName) {
-        Institution institution = institutionService.findInstitution(institutionName);
-        return representativeService.findRepresentativeFromInstitutionByName(institution, representativeName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        return representativeService.findByWorkPlacesAndUsername(institution, representativeName);
     }
 }

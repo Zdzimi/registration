@@ -2,8 +2,8 @@ package com.zdzimi.registrationapp.controller.user;
 
 import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.model.entities.Visit;
-import com.zdzimi.registrationapp.service.UserService;
-import com.zdzimi.registrationapp.service.VisitService;
+import com.zdzimi.registrationapp.service.entities.UserService;
+import com.zdzimi.registrationapp.service.entities.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +25,7 @@ public class RegistrationVisits {
     @GetMapping
     public List<Visit> showAllVisits(@PathVariable String username) {
         User user = userService.findUserByUsername(username);
-        return visitService.findAllByUser(user);
+        return visitService.findByUser(user);
     }
 
     @GetMapping("/{visitId}")

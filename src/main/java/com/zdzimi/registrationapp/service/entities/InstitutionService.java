@@ -1,4 +1,4 @@
-package com.zdzimi.registrationapp.service;
+package com.zdzimi.registrationapp.service.entities;
 
 import com.zdzimi.registrationapp.exception.InstitutionNotFoundException;
 import com.zdzimi.registrationapp.model.entities.Institution;
@@ -22,7 +22,7 @@ public class InstitutionService {
         return institutonRepo.findAll();
     }
 
-    public Institution findInstitution(String institutionName){
+    public Institution findByInstitutionName(String institutionName){
         return institutonRepo.findByInstitutionName(institutionName)
                 .orElseThrow(() -> new InstitutionNotFoundException(institutionName));
     }

@@ -2,8 +2,8 @@ package com.zdzimi.registrationapp.controller.moderator;
 
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.User;
-import com.zdzimi.registrationapp.service.InstitutionService;
-import com.zdzimi.registrationapp.service.UserService;
+import com.zdzimi.registrationapp.service.entities.InstitutionService;
+import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,14 +27,14 @@ public class RegistrationAppUserController {
 
     @GetMapping
     public List<User> showUsers(@PathVariable String institutionName){
-        Institution institution = institutionService.findInstitution(institutionName);
-        return userService.findUsersFromInstitution(institution);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        return userService.findByInstitutions(institution);
     }
 
     @GetMapping("/{username}")
     public User showUser(@PathVariable String institutionName,
                          @PathVariable String username){
-        Institution institution = institutionService.findInstitution(institutionName);
-        return userService.findUserFromInstitutionByName(institution, username);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        return userService.findByInstitutionsAndUsername(institution, username);
     }
 }

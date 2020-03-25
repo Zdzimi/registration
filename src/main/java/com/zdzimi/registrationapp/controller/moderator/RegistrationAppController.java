@@ -4,9 +4,9 @@ import com.zdzimi.registrationapp.model.*;
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Place;
 import com.zdzimi.registrationapp.model.entities.Representative;
-import com.zdzimi.registrationapp.service.InstitutionService;
-import com.zdzimi.registrationapp.service.PlaceService;
-import com.zdzimi.registrationapp.service.RepresentativeService;
+import com.zdzimi.registrationapp.service.entities.InstitutionService;
+import com.zdzimi.registrationapp.service.entities.PlaceService;
+import com.zdzimi.registrationapp.service.entities.RepresentativeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,11 +37,11 @@ public class RegistrationAppController {
         representativeService.save(representative);
         place.setInstitution(institution);
         placeService.save(place);
-        return institutionService.findInstitution(institution.getInstitutionName());
+        return institutionService.findByInstitutionName(institution.getInstitutionName());
     }
 
     @GetMapping("/{institutionName}")
     public Institution findInstitutionByName(@PathVariable String institutionName){
-        return institutionService.findInstitution(institutionName);
+        return institutionService.findByInstitutionName(institutionName);
     }
 }

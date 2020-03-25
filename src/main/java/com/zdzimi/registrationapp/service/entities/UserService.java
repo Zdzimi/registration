@@ -1,6 +1,5 @@
-package com.zdzimi.registrationapp.service;
+package com.zdzimi.registrationapp.service.entities;
 
-import com.zdzimi.registrationapp.comparator.UserComparator;
 import com.zdzimi.registrationapp.exception.UserNotFoundException;
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.User;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -21,24 +19,21 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public List<User> findUsersFromInstitution(Institution institution) {
-        return institution.getUsers().stream()
-                .sorted(new UserComparator())
-                .collect(Collectors.toList());
+    public List<User> findAll(){
+        return userRepo.findAll();
     }
 
-    public User findUserFromInstitutionByName(Institution institution, String username) {
-        return institution.getUsers().stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findAny().orElseThrow(() -> new UserNotFoundException(username));
+    public List<User> findByInstitutions(Institution institution) {
+        return userRepo.findByInstitutions(institution);
     }
 
     public User findUserByUsername(String username){
         return userRepo.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
     }
 
-    public List<User> findAllUsers(){
-        return userRepo.findAll();
+    public User findByInstitutionsAndUsername(Institution institution, String username) {
+        return userRepo.findByInstitutionsAndUsername(institution, username)
+                .orElseThrow(() -> new UserNotFoundException(username));
     }
 
     public User save(User user) {

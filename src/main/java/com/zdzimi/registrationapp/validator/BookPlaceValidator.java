@@ -25,7 +25,7 @@ public class BookPlaceValidator implements RegistrationAppValidator {
             LocalTime visitTimeStart = visit.getVisitTimeStart();
             LocalTime visitTimeEnd = visit.getVisitTimeStart().plusMinutes(visit.getVisitTimeLength());
 
-            if (!heEndsBeforeMe(visitTimeEnd) || !heStartsAfterMe(visitTimeStart)){
+            if (!(heEndsBeforeMe(visitTimeEnd) || heStartsAfterMe(visitTimeStart))){
                 return false;
             }
         }

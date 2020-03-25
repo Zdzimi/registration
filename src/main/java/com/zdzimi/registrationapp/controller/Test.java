@@ -2,8 +2,8 @@ package com.zdzimi.registrationapp.controller;
 
 import com.zdzimi.registrationapp.model.entities.Representative;
 import com.zdzimi.registrationapp.model.entities.User;
-import com.zdzimi.registrationapp.service.RepresentativeService;
-import com.zdzimi.registrationapp.service.UserService;
+import com.zdzimi.registrationapp.service.entities.RepresentativeService;
+import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,12 +38,12 @@ public class Test {
 
     @GetMapping("/representatives")
     public List<Representative> getAllRepresentatives(){
-        return representativeService.findAllRepresentatives();
+        return representativeService.findAll();
     }
 
     @GetMapping("/users")
     public List<User> getAllUsers(){
-        return userService.findAllUsers();
+        return userService.findAll();
     }
 
     @GetMapping("user/{username}")

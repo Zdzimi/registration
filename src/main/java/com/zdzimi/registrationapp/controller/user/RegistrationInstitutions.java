@@ -1,8 +1,7 @@
 package com.zdzimi.registrationapp.controller.user;
 
 import com.zdzimi.registrationapp.model.entities.Institution;
-import com.zdzimi.registrationapp.service.InstitutionService;
-import com.zdzimi.registrationapp.service.UserService;
+import com.zdzimi.registrationapp.service.entities.InstitutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,12 +14,10 @@ import java.util.List;
 @RequestMapping("registration/{username}/institutions")
 public class RegistrationInstitutions {
 
-    private UserService userService;
     private InstitutionService institutionService;
 
     @Autowired
-    public RegistrationInstitutions(UserService userService, InstitutionService institutionService) {
-        this.userService = userService;
+    public RegistrationInstitutions(InstitutionService institutionService) {
         this.institutionService = institutionService;
     }
 
@@ -31,6 +28,6 @@ public class RegistrationInstitutions {
 
     @GetMapping("/{institutionName}")
     public Institution showInstitution(@PathVariable String institutionName) {
-        return institutionService.findInstitution(institutionName);
+        return institutionService.findByInstitutionName(institutionName);
     }
 }

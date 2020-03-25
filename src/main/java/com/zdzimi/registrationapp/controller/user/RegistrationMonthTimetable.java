@@ -1,7 +1,7 @@
 package com.zdzimi.registrationapp.controller.user;
 
 import com.zdzimi.registrationapp.model.entities.*;
-import com.zdzimi.registrationapp.service.*;
+import com.zdzimi.registrationapp.service.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,9 +36,9 @@ public class RegistrationMonthTimetable {
     @GetMapping
     public List<MonthTimetable> showActualTimetables(@PathVariable String institutionName,
                                                      @PathVariable String representativeName) {
-        Institution institution = institutionService.findInstitution(institutionName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
-                .findRepresentativeFromInstitutionByName(institution, representativeName);
+                .findByWorkPlacesAndUsername(institution, representativeName);
         return monthTimetableService.findActualByRepresentativeAndInstitution(representative, institution);
     }
 
@@ -46,10 +46,10 @@ public class RegistrationMonthTimetable {
     public MonthTimetable showActualTimetable(@PathVariable String institutionName,
                                               @PathVariable String representativeName,
                                               @PathVariable String yearMonth) {
-        Institution institution = institutionService.findInstitution(institutionName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
-                .findRepresentativeFromInstitutionByName(institution, representativeName);
-        return monthTimetableService.findActualByRepresentativeInstitutionAndId(representative, institution, yearMonth);
+                .findByWorkPlacesAndUsername(institution, representativeName);
+        return monthTimetableService.findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
     }
 
     @GetMapping("/{yearMonth}/{day}")
@@ -57,12 +57,12 @@ public class RegistrationMonthTimetable {
                                                @PathVariable String representativeName,
                                                @PathVariable String yearMonth,
                                                @PathVariable int day) {
-        Institution institution = institutionService.findInstitution(institutionName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
-                .findRepresentativeFromInstitutionByName(institution, representativeName);
+                .findByWorkPlacesAndUsername(institution, representativeName);
         MonthTimetable monthTimetable = monthTimetableService
-                .findActualByRepresentativeInstitutionAndId(representative, institution, yearMonth);
-        return dayTimetableService.findDayTimetable(monthTimetable, day);
+                .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
+        return dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
     }
 
     @GetMapping("/{yearMonth}/{day}/{visitId}")
@@ -71,12 +71,12 @@ public class RegistrationMonthTimetable {
                                  @PathVariable String yearMonth,
                                  @PathVariable int day,
                                  @PathVariable long visitId) {
-        Institution institution = institutionService.findInstitution(institutionName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
-                .findRepresentativeFromInstitutionByName(institution, representativeName);
+                .findByWorkPlacesAndUsername(institution, representativeName);
         MonthTimetable monthTimetable = monthTimetableService
-                .findActualByRepresentativeInstitutionAndId(representative, institution, yearMonth);
-        DayTimetable dayTimetable = dayTimetableService.findDayTimetable(monthTimetable, day);
+                .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
+        DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
         return visitService.findByDayTimetableAndId(dayTimetable, visitId);
     }
 
@@ -88,12 +88,12 @@ public class RegistrationMonthTimetable {
                            @PathVariable int day,
                            @PathVariable long visitId) {
         User user = userService.findUserByUsername(username);
-        Institution institution = institutionService.findInstitution(institutionName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
-                .findRepresentativeFromInstitutionByName(institution, representativeName);
+                .findByWorkPlacesAndUsername(institution, representativeName);
         MonthTimetable monthTimetable = monthTimetableService
-                .findActualByRepresentativeInstitutionAndId(representative, institution, yearMonth);
-        DayTimetable dayTimetable = dayTimetableService.findDayTimetable(monthTimetable, day);
+                .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
+        DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
         Visit visit = visitService.findByDayTimetableAndId(dayTimetable, visitId);
         return visitService.bookVisit(visit, user);
     }

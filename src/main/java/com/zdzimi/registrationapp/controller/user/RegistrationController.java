@@ -1,7 +1,7 @@
 package com.zdzimi.registrationapp.controller.user;
 
 import com.zdzimi.registrationapp.model.entities.User;
-import com.zdzimi.registrationapp.service.UserService;
+import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
