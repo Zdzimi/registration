@@ -10,15 +10,16 @@ import java.util.Set;
 @Entity
 public class DayTimetable {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long dayTimetableId;
     private int dayOfMonth;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "dayTimetable")
     private Set<Visit> visits = new HashSet<>();
 
-    @JsonIgnore
     @ManyToOne
     private MonthTimetable monthTimetable;
 

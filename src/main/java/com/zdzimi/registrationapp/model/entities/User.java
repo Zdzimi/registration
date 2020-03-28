@@ -11,6 +11,7 @@ import java.util.Set;
 @Entity
 public class User {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long userId;
@@ -18,9 +19,12 @@ public class User {
     private String username;
     private String surname;
     private String email;
+    @JsonIgnore
     private String password;
+    @JsonIgnore
     private Role role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Visit> visits = new HashSet<>();
 

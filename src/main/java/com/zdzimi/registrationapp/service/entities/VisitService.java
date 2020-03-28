@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,12 +36,12 @@ public class VisitService {
                 .orElseThrow(() -> new VisitNotFoundException(visitId));
     }
 
-    public List<Visit> findAllInPlaceByYearMonthAndDay(Place place, int year, int month, int dayOfMonth) {
+    public Set<Visit> findAllInPlaceByYearMonthAndDay(Place place, int year, int month, int dayOfMonth) {
         return place.getVisits().stream()
                 .filter(visit -> visit.getDayTimetable().getMonthTimetable().getYear() == year)
                 .filter(visit -> visit.getDayTimetable().getMonthTimetable().getMonth() == month)
                 .filter(visit -> visit.getDayTimetable().getDayOfMonth() == dayOfMonth)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     public Visit bookVisit(Visit visit, User user) {
@@ -64,8 +65,19 @@ public class VisitService {
         LocalDate now = LocalDate.now();
         if (now.isBefore(visitDate)) {
             visit.setUser(null);
-            return visitRepo.save(visit);       //  todo???
+            return visitRepo.save(visit);
         }
         return null;
+    }
+
+    public void deleteByDayTimetableAndId(DayTimetable dayTimetable, long visitId) {
+        Visit visit = findByDayTimetableAndId(dayTimetable, visitId);
+        if (visit.getUser() == null) {
+            delete(visit);
+        }
+    }
+
+    private void delete(Visit visit) {
+        visitRepo.delete(visit);
     }
 }

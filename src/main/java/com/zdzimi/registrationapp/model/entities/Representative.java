@@ -14,6 +14,7 @@ public class Representative extends User{
     @ManyToMany
     private Set<Institution> workPlaces = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "representative")
     private Set<MonthTimetable> monthTimetables = new HashSet<>();
 

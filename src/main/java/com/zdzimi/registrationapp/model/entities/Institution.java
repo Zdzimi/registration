@@ -1,5 +1,7 @@
 package com.zdzimi.registrationapp.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -8,20 +10,25 @@ import java.util.Set;
 @Entity
 public class Institution {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long institutionId;
     private String institutionName;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "institutions")
     private Set<User> users = new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "workPlaces")
     private Set<Representative> representatives = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "institution")
     private Set<Place> places = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "institution")
     private Set<MonthTimetable> monthTimetables = new HashSet<>();
 

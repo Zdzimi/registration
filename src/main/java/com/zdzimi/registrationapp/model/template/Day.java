@@ -14,13 +14,8 @@ public class Day {
 
     public Day(int dayNumber) {
         this.dayNumber = dayNumber;
-    }
-
-    public Day(int dayNumber, String placeName, LocalTime timeStart, LocalTime timeEnd) {
-        this.dayNumber = dayNumber;
-        this.placeName = placeName;
-        this.timeStart = timeStart;
-        this.timeEnd = timeEnd;
+        this.timeStart = LocalTime.of(0,0,0);
+        this.timeEnd = LocalTime.of(0,0,0);
     }
 
     public int getDayNumber() {

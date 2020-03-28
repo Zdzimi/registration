@@ -1,4 +1,4 @@
-package com.zdzimi.registrationapp.controller.moderator;
+package com.zdzimi.registrationapp.controller.representative;
 
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Representative;

@@ -10,6 +10,7 @@ import java.util.Set;
 @Entity
 public class MonthTimetable {
 
+    @JsonIgnore
     @Id
     @GeneratedValue
     private long timetableId;
@@ -17,14 +18,13 @@ public class MonthTimetable {
     private int year;
     private int month;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "monthTimetable")
     private Set<DayTimetable> dayTimetableSet = new HashSet<>();
 
-    @JsonIgnore
     @ManyToOne
     private Representative representative;
 
-    @JsonIgnore
     @ManyToOne
     private Institution institution;
 

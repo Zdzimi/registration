@@ -9,6 +9,7 @@ import java.util.Objects;
 @Entity
 public class Visit {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long visitId;
@@ -17,11 +18,9 @@ public class Visit {
     @JsonIgnore
     private long visitTimeLength;
 
-    @JsonIgnore
     @ManyToOne
     private User user;
 
-    @JsonIgnore
     @ManyToOne
     private DayTimetable dayTimetable;
 

@@ -10,6 +10,7 @@ import java.util.Set;
 @Entity
 public class Place {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long placeId;

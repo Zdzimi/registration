@@ -6,12 +6,12 @@ import com.zdzimi.registrationapp.model.template.Day;
 import com.zdzimi.registrationapp.service.entities.DayTimetableService;
 import com.zdzimi.registrationapp.service.entities.PlaceService;
 import com.zdzimi.registrationapp.service.entities.VisitService;
-import com.zdzimi.registrationapp.validator.BookPlaceValidator;
+import com.zdzimi.registrationapp.validator.VisitValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Set;
 
 @Service
 public class DayTimetableAndErrorsService {
@@ -29,36 +29,45 @@ public class DayTimetableAndErrorsService {
         this.visitService = visitService;
     }
 
-    public DayTimetableAndErrors createAndSaveDayTimetable(Day day, MonthTimetable monthTimetable,
-                                                           long visitTime, Institution institution) {
-        DayTimetable dayTimetable = new DayTimetable(day.getDayNumber(), monthTimetable);
-        dayTimetableService.save(dayTimetable);
+    public DayTimetableAndErrors createOrUpdate(Day day, MonthTimetable monthTimetable, long visitTime) {
+        DayTimetable dayTimetable = dayTimetableService.getOrCreate(day.getDayNumber(), monthTimetable);
 
-        String placeName = day.getPlaceName();
-        Place place = placeService.findByInstitutionAndPlaceName(institution, placeName);
+        Place place = placeService.findByInstitutionAndPlaceName(monthTimetable.getInstitution(), day.getPlaceName());
 
         LocalTime timeWorkStart = day.getTimeStart();
         LocalTime timeWorkEnd = day.getTimeEnd();
 
         DayTimetableAndErrors dayTimetableAndErrors = new DayTimetableAndErrors(day.getDayNumber());
 
-        int year = dayTimetable.getMonthTimetable().getYear();
-        int month = dayTimetable.getMonthTimetable().getMonth();
-        int dayOfMonth = dayTimetable.getDayOfMonth();
-        List<Visit> visits = visitService.findAllInPlaceByYearMonthAndDay(place, year, month, dayOfMonth);   // ?? not too much??
+        Set<Visit> visitSetByPlaceAndDay = getVisitListFromPlaceAndDay(dayTimetable, place);
+        Set<Visit> visitSetByRepresentativeAndDay = dayTimetable.getVisits();
 
         while (timeWorkStart.isBefore(timeWorkEnd)) {
-            BookPlaceValidator bookPlaceValidator = new BookPlaceValidator(visits, timeWorkStart, visitTime);
-            if (bookPlaceValidator.isValid()){
+            VisitValidator placeBookedValidator = new VisitValidator(visitSetByPlaceAndDay, timeWorkStart, visitTime);
+            VisitValidator representativeValidator = new VisitValidator(visitSetByRepresentativeAndDay, timeWorkStart, visitTime);
+
+            if (placeBookedValidator.isValid() && representativeValidator.isValid()){
                 Visit visit = new Visit(timeWorkStart, visitTime, dayTimetable, place);
                 visitService.save(visit);
                 dayTimetableAndErrors.getVisits().add(visit);
             }else {
-                dayTimetableAndErrors.getErrors().add("Place " + placeName + " is booked "
-                        + dayOfMonth + " - " + timeWorkStart + " - " + timeWorkStart.plusMinutes(visitTime));
+                if (!placeBookedValidator.isValid()) {
+                    dayTimetableAndErrors.getErrors().add("Place " + day.getPlaceName() + " is booked "
+                            + day.getDayNumber() + " - " + timeWorkStart + " - " + timeWorkStart.plusMinutes(visitTime));
+                }
+                if (!representativeValidator.isValid()) {
+                    dayTimetableAndErrors.getErrors().add("You can't be in two places in the same time...");
+                }
             }
             timeWorkStart = timeWorkStart.plusMinutes(visitTime);
         }
         return dayTimetableAndErrors;
+    }
+
+    private Set<Visit> getVisitListFromPlaceAndDay(DayTimetable dayTimetable, Place place) {
+        int year = dayTimetable.getMonthTimetable().getYear();
+        int month = dayTimetable.getMonthTimetable().getMonth();
+        int dayOfMonth = dayTimetable.getDayOfMonth();
+        return visitService.findAllInPlaceByYearMonthAndDay(place, year, month, dayOfMonth);
     }
 }

@@ -2,7 +2,6 @@ package com.zdzimi.registrationapp.service;
 
 import com.zdzimi.registrationapp.model.DayTimetableAndErrors;
 import com.zdzimi.registrationapp.model.MonthTimetableAndErrors;
-import com.zdzimi.registrationapp.model.entities.DayTimetable;
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.MonthTimetable;
 import com.zdzimi.registrationapp.model.entities.Representative;
@@ -27,23 +26,20 @@ public class MonthTimetableAndErrorsService {
         this.dayTimetableAndErrorsService = dayTimetableAndErrorsService;
     }
 
-    public MonthTimetableAndErrors createAndSaveMonthTimetableFromTemplate(Institution institution,
-                                                                           Representative representative,
-                                                                           Template template) {
+    public MonthTimetableAndErrors createOrUpdate(Institution institution, Representative representative, Template template) {
+
         int year = template.getYearAndMonth().getYear();
         int month = template.getYearAndMonth().getMonth();
-
-        MonthTimetable monthTimetable = new MonthTimetable(year, month, representative, institution);
-        monthTimetableService.save(monthTimetable);
+        MonthTimetable monthTimetable = monthTimetableService
+                .getOrCreate(year, month, representative, institution);
 
         MonthTimetableAndErrors monthTimetableAndErrors = new MonthTimetableAndErrors(year, month);
-
         List<Day> days = template.getDays();
         long visitTime = template.getVisitTime();
 
         for (Day day : days) {
             DayTimetableAndErrors dayTimetableAndErrors = dayTimetableAndErrorsService
-                    .createAndSaveDayTimetable(day, monthTimetable, visitTime, institution);
+                    .createOrUpdate(day, monthTimetable, visitTime);
             monthTimetableAndErrors.getDayTimetableAndErrors().add(dayTimetableAndErrors);
         }
         return monthTimetableAndErrors;

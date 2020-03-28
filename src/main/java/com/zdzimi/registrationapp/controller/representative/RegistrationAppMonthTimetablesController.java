@@ -1,14 +1,11 @@
-package com.zdzimi.registrationapp.controller.moderator;
+package com.zdzimi.registrationapp.controller.representative;
 
 import com.zdzimi.registrationapp.model.MonthTimetableAndErrors;
 import com.zdzimi.registrationapp.model.entities.*;
 import com.zdzimi.registrationapp.model.template.Template;
 import com.zdzimi.registrationapp.model.template.YearAndMonth;
 import com.zdzimi.registrationapp.service.MonthTimetableAndErrorsService;
-import com.zdzimi.registrationapp.service.entities.DayTimetableService;
-import com.zdzimi.registrationapp.service.entities.InstitutionService;
-import com.zdzimi.registrationapp.service.entities.MonthTimetableService;
-import com.zdzimi.registrationapp.service.entities.RepresentativeService;
+import com.zdzimi.registrationapp.service.entities.*;
 import com.zdzimi.registrationapp.service.template.TemplateService;
 import com.zdzimi.registrationapp.service.template.YearAndMonthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +21,7 @@ public class RegistrationAppMonthTimetablesController {
     private RepresentativeService representativeService;
     private MonthTimetableService monthTimetableService;
     private DayTimetableService dayTimetableService;
+    private VisitService visitService;
     private TemplateService templateService;
     private YearAndMonthService yearAndMonthService;
     private MonthTimetableAndErrorsService monthTimetableAndErrorsService;
@@ -33,6 +31,7 @@ public class RegistrationAppMonthTimetablesController {
                                                     RepresentativeService representativeService,
                                                     MonthTimetableService monthTimetableService,
                                                     DayTimetableService dayTimetableService,
+                                                    VisitService visitService,
                                                     TemplateService templateService,
                                                     YearAndMonthService yearAndMonthService,
                                                     MonthTimetableAndErrorsService monthTimetableAndErrorsService) {
@@ -40,6 +39,7 @@ public class RegistrationAppMonthTimetablesController {
         this.representativeService = representativeService;
         this.monthTimetableService = monthTimetableService;
         this.dayTimetableService = dayTimetableService;
+        this.visitService = visitService;
         this.templateService = templateService;
         this.yearAndMonthService = yearAndMonthService;
         this.monthTimetableAndErrorsService = monthTimetableAndErrorsService;
@@ -63,7 +63,7 @@ public class RegistrationAppMonthTimetablesController {
         MonthTimetable monthTimetable = monthTimetableService
                 .findLastByRepresentativeAndInstitution(representative, institution);
         YearAndMonth yearAndMonth = yearAndMonthService.getYearAndMonth(monthTimetable);
-        return templateService.getNextEmptyTemplate(yearAndMonth);
+        return templateService.getNextTemplate(yearAndMonth);
     }
 
     @PostMapping("/get-next-template")
@@ -73,8 +73,7 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableAndErrorsService
-                .createAndSaveMonthTimetableFromTemplate(institution, representative, template);
+        return monthTimetableAndErrorsService.createOrUpdate(institution, representative, template);
     }
 
     @GetMapping("/{year}")
@@ -99,15 +98,18 @@ public class RegistrationAppMonthTimetablesController {
                 .findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
     }
 
-    @PostMapping("/{year}/{month}")
-    public void deleteMonthTimetablesByYearAndMonth(@PathVariable String institutionName,
-                                                    @PathVariable String representativeName,
-                                                    @PathVariable int year,
-                                                    @PathVariable int month) {
+    @GetMapping("/{year}/{month}/get-template")
+    public Template getMonthTemplate(@PathVariable int year, @PathVariable int month) {
+        return templateService.getMonthTemplate(year, month);
+    }
+
+    @PostMapping("/{year}/{month}/get-template")
+    public MonthTimetableAndErrors updateMonthtimetable(@PathVariable String institutionName,
+                                                        @PathVariable String representativeName,
+                                                        @RequestBody Template template) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
-        Representative representative = representativeService
-                .findByWorkPlacesAndUsername(institution, representativeName);
-        monthTimetableService.deleteByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
+        Representative representative = representativeService.findByWorkPlacesAndUsername(institution, representativeName);
+        return monthTimetableAndErrorsService.createOrUpdate(institution, representative, template);
     }
 
     @GetMapping("/{year}/{month}/{day}")
@@ -124,46 +126,43 @@ public class RegistrationAppMonthTimetablesController {
         return dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
     }
 
-    @PostMapping("/{year}/{month}/{day}")
-    public void deleteDayTimetable(@PathVariable String institutionName,
-                                         @PathVariable String representativeName,
-                                         @PathVariable int year,
-                                         @PathVariable int month,
-                                         @PathVariable int day) {
+    @GetMapping("/{year}/{month}/{day}/get-template")
+    public Template getDayTemplate(@PathVariable int year, @PathVariable int month, @PathVariable int day) {
+        return templateService.getDayTemplate(year, month, day);
+    }
+
+    @PostMapping("/{year}/{month}/{day}/get-template")
+    public MonthTimetableAndErrors createDayTimetable(@PathVariable String institutionName,
+                                                      @PathVariable String representativeName,
+                                                      @RequestBody Template template) {
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        Representative representative = representativeService.findByWorkPlacesAndUsername(institution, representativeName);
+        return monthTimetableAndErrorsService.createOrUpdate(institution, representative, template);
+    }
+
+    @GetMapping("/{year}/{month}/{day}/{visitId}")
+    public Visit showVisit(@PathVariable String institutionName, @PathVariable String representativeName,
+                           @PathVariable int year, @PathVariable int month,
+                           @PathVariable int day, @PathVariable long visitId) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
         MonthTimetable monthTimetable = monthTimetableService
                 .findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
-        dayTimetableService.delete(monthTimetable, day);
+        DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
+        return visitService.findByDayTimetableAndId(dayTimetable, visitId);
     }
 
-    @GetMapping("/{year}/{month}/{day}/get-day-template")
-    public Template getDayTemplate(@PathVariable String institutionName,
-                                   @PathVariable String representativeName,
-                                   @PathVariable int year,
-                                   @PathVariable int month,
-                                   @PathVariable int day) {
-        return null;    //  todo
-    }
-
-    @PostMapping("/{year}/{month}/{day}/get-day-template")
-    public Visit createDayTimetable(@PathVariable String institutionName,
-                                    @PathVariable String representativeName,
-                                    @PathVariable int year,
-                                    @PathVariable int month,
-                                    @PathVariable int day,
-                                    @RequestBody Template template) {
-        return null;    //  todo
-    }
-
-    @PostMapping("/{year}/{month}/{day}/delete-day")
-    public Visit deleteDayTimetable(@PathVariable String institutionName,
-                                    @PathVariable String representativeName,
-                                    @PathVariable int year,
-                                    @PathVariable int month,
-                                    @PathVariable int day,
-                                    @RequestBody Template template) {
-        return null;    //  todo
+    @PostMapping("/{year}/{month}/{day}/{visitId}")
+    public void deleteVisit(@PathVariable String institutionName, @PathVariable String representativeName,
+                            @PathVariable int year, @PathVariable int month,
+                            @PathVariable int day, @PathVariable long visitId) {
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        Representative representative = representativeService
+                .findByWorkPlacesAndUsername(institution, representativeName);
+        MonthTimetable monthTimetable = monthTimetableService
+                .findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
+        DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
+        visitService.deleteByDayTimetableAndId(dayTimetable, visitId);
     }
 }

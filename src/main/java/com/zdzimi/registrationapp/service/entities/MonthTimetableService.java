@@ -6,7 +6,6 @@ import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.MonthTimetable;
 import com.zdzimi.registrationapp.model.entities.Representative;
 import com.zdzimi.registrationapp.repository.MonthTimetableRepo;
-import com.zdzimi.registrationapp.validator.DeleteMonthTimetableValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +39,17 @@ public class MonthTimetableService {
                 .orElseThrow(() -> new MonthTimetableNotFoundException(year, month));
     }
 
+    public MonthTimetable getOrCreate(int year, int month, Representative representative, Institution institution) {
+        MonthTimetable monthTimetable = monthTimetableRepo
+                .findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month)
+                .orElse(null);
+        if (monthTimetable == null) {
+            monthTimetable = new MonthTimetable(year, month, representative, institution);
+            save(monthTimetable);
+        }
+        return monthTimetable;
+    }
+
     public MonthTimetable findLastByRepresentativeAndInstitution(Representative representative, Institution institution) {
         return findByRepresentativeAndInstitution(representative, institution).stream()
                 .max(new MonthTimetableComparator()).orElse(null);
@@ -69,14 +79,5 @@ public class MonthTimetableService {
 
     public void save(MonthTimetable monthTimetable) {
         monthTimetableRepo.save(monthTimetable);
-    }
-
-    public void deleteByRepresentativeAndInstitutionAndYearAndMonth(Representative representative, Institution institution,
-                                                                    int year, int month) {
-        MonthTimetable monthTimetable = findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
-        DeleteMonthTimetableValidator deleteMonthTimetableValidator = new DeleteMonthTimetableValidator(monthTimetable);
-        if (deleteMonthTimetableValidator.isValid()) {        //      todo
-            monthTimetableRepo.delete(monthTimetable);
-        }
     }
 }

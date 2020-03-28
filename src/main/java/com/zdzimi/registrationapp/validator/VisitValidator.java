@@ -3,15 +3,15 @@ package com.zdzimi.registrationapp.validator;
 import com.zdzimi.registrationapp.model.entities.Visit;
 
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Set;
 
-public class BookPlaceValidator implements RegistrationAppValidator {
+public class VisitValidator implements RegistrationAppValidator {
 
-    private List<Visit> visits;
+    private Set<Visit> visits;
     private LocalTime timeStart;
     private long visitTimeLength;
 
-    public BookPlaceValidator(List<Visit> visits, LocalTime timeStart, long visitTimeLength) {
+    public VisitValidator(Set<Visit> visits, LocalTime timeStart, long visitTimeLength) {
         this.visits = visits;
         this.timeStart = timeStart;
         this.visitTimeLength = visitTimeLength;
@@ -20,12 +20,11 @@ public class BookPlaceValidator implements RegistrationAppValidator {
     @Override
     public boolean isValid() {
 
-        for (int i = 0; i < visits.size(); i++) {
-            Visit visit = visits.get(i);
+        for (Visit visit : visits) {
             LocalTime visitTimeStart = visit.getVisitTimeStart();
             LocalTime visitTimeEnd = visit.getVisitTimeStart().plusMinutes(visit.getVisitTimeLength());
 
-            if (!(heEndsBeforeMe(visitTimeEnd) || heStartsAfterMe(visitTimeStart))){
+            if (!(heEndsBeforeMe(visitTimeEnd) || heStartsAfterMe(visitTimeStart))) {
                 return false;
             }
         }
@@ -36,7 +35,8 @@ public class BookPlaceValidator implements RegistrationAppValidator {
         return visitTimeEnd.isBefore(timeStart) || visitTimeEnd.equals(timeStart);
     }
     private boolean heStartsAfterMe(LocalTime visitTimeStart) {
-        return visitTimeStart.isAfter(timeStart.plusMinutes(visitTimeLength)) || visitTimeStart.equals(timeStart);
+        return visitTimeStart.isAfter(timeStart.plusMinutes(visitTimeLength))
+                || visitTimeStart.equals(timeStart.plusMinutes(visitTimeLength));
     }
 
 }
