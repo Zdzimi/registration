@@ -1,8 +1,10 @@
 package com.zdzimi.registrationapp.model.template;
 
+import org.springframework.hateoas.EntityModel;
+
 import java.util.List;
 
-public class Template {
+public class Template extends EntityModel {
 
     private YearAndMonth yearAndMonth;
     private List<Day> days;

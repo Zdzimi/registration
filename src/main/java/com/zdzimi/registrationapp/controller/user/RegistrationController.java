@@ -1,6 +1,7 @@
 package com.zdzimi.registrationapp.controller.user;
 
 import com.zdzimi.registrationapp.model.entities.User;
+import com.zdzimi.registrationapp.service.UserLinkService;
 import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 public class RegistrationController {
 
     private UserService userService;
+    private UserLinkService userLinkService;
 
     @Autowired
-    public RegistrationController(UserService userService) {
+    public RegistrationController(UserService userService, UserLinkService userLinkService) {
         this.userService = userService;
+        this.userLinkService = userLinkService;
     }
 
     @PostMapping
@@ -23,6 +26,8 @@ public class RegistrationController {
 
     @GetMapping("/{username}")
     public User showUser(@PathVariable String username) {
-        return userService.findUserByUsername(username);
+        User user = userService.findUserByUsername(username);
+        userLinkService.addLinks(user);
+        return user;
     }
 }

@@ -26,6 +26,10 @@ public class VisitService {
         return visitRepo.findByUser(user);
     }
 
+    public List<Visit> findByDayTimetable(DayTimetable dayTimetable) {
+        return visitRepo.findByDayTimetable(dayTimetable);
+    }
+
     public Visit findByUserAndId(User user, long visitId) {
         return visitRepo.findByUserAndVisitId(user, visitId)
                 .orElseThrow(() -> new VisitNotFoundException(visitId));
@@ -44,9 +48,10 @@ public class VisitService {
                 .collect(Collectors.toSet());
     }
 
-    public Visit bookVisit(Visit visit, User user) {
+    public Visit bookVisit(Visit visit, User user, Institution institution) {
         if (visit.getUser() == null) {
             visit.setUser(user);
+            user.getInstitutions().add(institution);
             return visitRepo.save(visit);
         }
         return visit;

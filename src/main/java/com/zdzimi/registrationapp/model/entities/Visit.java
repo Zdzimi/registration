@@ -1,13 +1,14 @@
 package com.zdzimi.registrationapp.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.hateoas.EntityModel;
 
 import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.Objects;
 
 @Entity
-public class Visit {
+public class Visit extends EntityModel {
 
     @JsonIgnore
     @Id

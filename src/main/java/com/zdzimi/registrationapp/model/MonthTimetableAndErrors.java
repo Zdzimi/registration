@@ -1,9 +1,11 @@
 package com.zdzimi.registrationapp.model;
 
+import org.springframework.hateoas.EntityModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MonthTimetableAndErrors {
+public class MonthTimetableAndErrors extends EntityModel {
 
     private int year;
     private int month;

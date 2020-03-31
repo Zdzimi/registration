@@ -1,6 +1,7 @@
 package com.zdzimi.registrationapp.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.hateoas.EntityModel;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -8,7 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-public class Institution {
+public class Institution extends EntityModel {
 
     @JsonIgnore
     @Id

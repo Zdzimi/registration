@@ -5,7 +5,7 @@
 //import com.zdzimi.registrationapp.model.entities.Place;
 //import com.zdzimi.registrationapp.model.entities.Representative;
 //import com.zdzimi.registrationapp.model.entities.User;
-//import com.zdzimi.registrationapp.repository.InstitutonRepo;
+//import com.zdzimi.registrationapp.repository.InstitutionRepo;
 //import com.zdzimi.registrationapp.repository.PlaceRepo;
 //import com.zdzimi.registrationapp.repository.RepresentativeRepo;
 //import com.zdzimi.registrationapp.repository.UserRepo;
@@ -18,19 +18,19 @@
 //@Controller
 //public class Start {
 //
-//    private InstitutonRepo institutonRepo;
+//    private InstitutionRepo institutionRepo;
 //    private UserRepo userRepo;
 //    private RepresentativeRepo representativeRepo;
 //    private PlaceRepo placeRepo;
 //    private PasswordEncoder passwordEncoder;
 //
 //    @Autowired
-//    public Start(InstitutonRepo institutonRepo,
+//    public Start(InstitutionRepo institutionRepo,
 //                 UserRepo userRepo,
 //                 RepresentativeRepo representativeRepo,
 //                 PlaceRepo placeRepo,
 //                 PasswordEncoder passwordEncoder) {
-//        this.institutonRepo = institutonRepo;
+//        this.institutionRepo = institutionRepo;
 //        this.userRepo = userRepo;
 //        this.representativeRepo = representativeRepo;
 //        this.placeRepo = placeRepo;
@@ -40,7 +40,7 @@
 //    @EventListener(ApplicationReadyEvent.class)
 //    public void startApp(){
 //        Institution institution = new Institution("inst");
-//        institutonRepo.save(institution);
+//        institutionRepo.save(institution);
 //
 //        Representative jan = new Representative(
 //                "Jan",
@@ -86,7 +86,7 @@
 //        //====================
 //
 //        Institution institutionZ = new Institution("instZ");
-//        institutonRepo.save(institutionZ);
+//        institutionRepo.save(institutionZ);
 //
 //        Representative janZ = new Representative(
 //                "Ola",

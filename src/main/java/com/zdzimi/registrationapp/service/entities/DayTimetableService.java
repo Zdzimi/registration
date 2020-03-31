@@ -7,6 +7,8 @@ import com.zdzimi.registrationapp.repository.DayTimetableRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DayTimetableService {
 
@@ -15,6 +17,10 @@ public class DayTimetableService {
     @Autowired
     public DayTimetableService(DayTimetableRepo dayTimetableRepo) {
         this.dayTimetableRepo = dayTimetableRepo;
+    }
+
+    public List<DayTimetable> findByMonthTimetable(MonthTimetable monthTimetable) {
+        return dayTimetableRepo.findByMonthTimetable(monthTimetable);
     }
 
     public DayTimetable findByMonthTimetableAndDayOfMonth(MonthTimetable monthTimetable, int day) {

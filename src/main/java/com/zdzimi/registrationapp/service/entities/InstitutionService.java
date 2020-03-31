@@ -2,7 +2,8 @@ package com.zdzimi.registrationapp.service.entities;
 
 import com.zdzimi.registrationapp.exception.InstitutionNotFoundException;
 import com.zdzimi.registrationapp.model.entities.Institution;
-import com.zdzimi.registrationapp.repository.InstitutonRepo;
+import com.zdzimi.registrationapp.model.entities.User;
+import com.zdzimi.registrationapp.repository.InstitutionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,23 +12,27 @@ import java.util.List;
 @Service
 public class InstitutionService {
 
-    private InstitutonRepo institutonRepo;
+    private InstitutionRepo institutionRepo;
 
     @Autowired
-    public InstitutionService(InstitutonRepo institutonRepo) {
-        this.institutonRepo = institutonRepo;
+    public InstitutionService(InstitutionRepo institutionRepo) {
+        this.institutionRepo = institutionRepo;
     }
 
     public List<Institution> findAll() {
-        return institutonRepo.findAll();
+        return institutionRepo.findAll();
     }
 
     public Institution findByInstitutionName(String institutionName){
-        return institutonRepo.findByInstitutionName(institutionName)
+        return institutionRepo.findByInstitutionName(institutionName)
                 .orElseThrow(() -> new InstitutionNotFoundException(institutionName));
     }
 
     public Institution save(Institution institution) {
-        return institutonRepo.save(institution);
+        return institutionRepo.save(institution);
+    }
+
+    public List<Institution> findByUsers(User user) {
+        return institutionRepo.findByUsers(user);
     }
 }

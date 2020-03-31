@@ -1,6 +1,7 @@
 package com.zdzimi.registrationapp.controller.user;
 
 import com.zdzimi.registrationapp.model.entities.*;
+import com.zdzimi.registrationapp.service.UserLinkService;
 import com.zdzimi.registrationapp.service.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ public class RegistrationMonthTimetable {
     private MonthTimetableService monthTimetableService;
     private DayTimetableService dayTimetableService;
     private VisitService visitService;
+    private UserLinkService userLinkService;
 
     @Autowired
     public RegistrationMonthTimetable(UserService userService,
@@ -24,60 +26,69 @@ public class RegistrationMonthTimetable {
                                       RepresentativeService representativeService,
                                       MonthTimetableService monthTimetableService,
                                       DayTimetableService dayTimetableService,
-                                      VisitService visitService) {
+                                      VisitService visitService,
+                                      UserLinkService userLinkService) {
         this.userService = userService;
         this.institutionService = institutionService;
         this.representativeService = representativeService;
         this.monthTimetableService = monthTimetableService;
         this.dayTimetableService = dayTimetableService;
         this.visitService = visitService;
+        this.userLinkService = userLinkService;
     }
 
     @GetMapping
-    public List<MonthTimetable> showActualTimetables(@PathVariable String institutionName,
+    public List<MonthTimetable> showActualTimetables(@PathVariable String username,
+                                                     @PathVariable String institutionName,
                                                      @PathVariable String representativeName) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableService.findActualByRepresentativeAndInstitution(representative, institution);
+        List<MonthTimetable> monthTimetableList = monthTimetableService
+                .findActualByRepresentativeAndInstitution(representative, institution);
+        userLinkService.addLinksToMonthTimetables(monthTimetableList, username, institutionName, representativeName);
+        return monthTimetableList;
     }
 
     @GetMapping("/{yearMonth}")
-    public MonthTimetable showActualTimetable(@PathVariable String institutionName,
-                                              @PathVariable String representativeName,
-                                              @PathVariable String yearMonth) {
+    public MonthTimetable showActualTimetable(@PathVariable String username, @PathVariable String institutionName,
+                                              @PathVariable String representativeName, @PathVariable String yearMonth) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableService.findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
+        MonthTimetable monthTimetable = monthTimetableService
+                .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
+        userLinkService.addLinksToMonthTimetable(monthTimetable, username, institutionName, representativeName, yearMonth);
+        return monthTimetable;
     }
 
     @GetMapping("/{yearMonth}/{day}")
-    public DayTimetable showActualDayTimetable(@PathVariable String institutionName,
-                                               @PathVariable String representativeName,
-                                               @PathVariable String yearMonth,
+    public DayTimetable showActualDayTimetable(@PathVariable String username, @PathVariable String institutionName,
+                                               @PathVariable String representativeName, @PathVariable String yearMonth,
                                                @PathVariable int day) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
         MonthTimetable monthTimetable = monthTimetableService
                 .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
-        return dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
+        DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
+        userLinkService.addLinksToDayTimetable(dayTimetable, username, institutionName, representativeName, yearMonth, day);
+        return dayTimetable;
     }
 
     @GetMapping("/{yearMonth}/{day}/{visitId}")
-    public Visit showActualVisit(@PathVariable String institutionName,
-                                 @PathVariable String representativeName,
-                                 @PathVariable String yearMonth,
-                                 @PathVariable int day,
-                                 @PathVariable long visitId) {
+    public Visit showActualVisit(@PathVariable String username, @PathVariable String institutionName,
+                                 @PathVariable String representativeName, @PathVariable String yearMonth,
+                                 @PathVariable int day, @PathVariable long visitId) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
         MonthTimetable monthTimetable = monthTimetableService
                 .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
         DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
-        return visitService.findByDayTimetableAndId(dayTimetable, visitId);
+        Visit visit = visitService.findByDayTimetableAndId(dayTimetable, visitId);
+        userLinkService.addLinksToVisit(visit, username, institutionName, representativeName, yearMonth, day, visitId);
+        return visit;
     }
 
     @GetMapping("/{yearMonth}/{day}/{visitId}/book")
@@ -95,6 +106,8 @@ public class RegistrationMonthTimetable {
                 .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
         DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
         Visit visit = visitService.findByDayTimetableAndId(dayTimetable, visitId);
-        return visitService.bookVisit(visit, user);
+        Visit bookVisit = visitService.bookVisit(visit, user, institution);
+        userLinkService.addLinksToBack(bookVisit, username, institutionName, representativeName, yearMonth, day);
+        return bookVisit;
     }
 }

@@ -4,6 +4,7 @@ import com.zdzimi.registrationapp.model.*;
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Place;
 import com.zdzimi.registrationapp.model.entities.Representative;
+import com.zdzimi.registrationapp.service.RepresentativeLinkService;
 import com.zdzimi.registrationapp.service.entities.InstitutionService;
 import com.zdzimi.registrationapp.service.entities.PlaceService;
 import com.zdzimi.registrationapp.service.entities.RepresentativeService;
@@ -17,14 +18,17 @@ public class RegistrationAppController {
     private InstitutionService institutionService;
     private PlaceService placeService;
     private RepresentativeService representativeService;
+    private RepresentativeLinkService representativeLinkService;
 
     @Autowired
     public RegistrationAppController(InstitutionService institutionService,
                                      PlaceService placeService,
-                                     RepresentativeService representativeService) {
+                                     RepresentativeService representativeService,
+                                     RepresentativeLinkService representativeLinkService) {
         this.institutionService = institutionService;
         this.placeService = placeService;
         this.representativeService = representativeService;
+        this.representativeLinkService = representativeLinkService;
     }
 
     @PostMapping
@@ -42,6 +46,8 @@ public class RegistrationAppController {
 
     @GetMapping("/{institutionName}")
     public Institution findInstitutionByName(@PathVariable String institutionName){
-        return institutionService.findByInstitutionName(institutionName);
+        Institution institution = institutionService.findByInstitutionName(institutionName);
+        representativeLinkService.addLinkToInstitution(institution, institutionName);
+        return institution;
     }
 }

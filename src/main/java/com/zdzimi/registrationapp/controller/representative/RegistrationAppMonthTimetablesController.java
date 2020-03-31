@@ -5,6 +5,7 @@ import com.zdzimi.registrationapp.model.entities.*;
 import com.zdzimi.registrationapp.model.template.Template;
 import com.zdzimi.registrationapp.model.template.YearAndMonth;
 import com.zdzimi.registrationapp.service.MonthTimetableAndErrorsService;
+import com.zdzimi.registrationapp.service.RepresentativeLinkService;
 import com.zdzimi.registrationapp.service.entities.*;
 import com.zdzimi.registrationapp.service.template.TemplateService;
 import com.zdzimi.registrationapp.service.template.YearAndMonthService;
@@ -25,6 +26,7 @@ public class RegistrationAppMonthTimetablesController {
     private TemplateService templateService;
     private YearAndMonthService yearAndMonthService;
     private MonthTimetableAndErrorsService monthTimetableAndErrorsService;
+    private RepresentativeLinkService representativeLinkService;
 
     @Autowired
     public RegistrationAppMonthTimetablesController(InstitutionService institutionService,
@@ -34,7 +36,8 @@ public class RegistrationAppMonthTimetablesController {
                                                     VisitService visitService,
                                                     TemplateService templateService,
                                                     YearAndMonthService yearAndMonthService,
-                                                    MonthTimetableAndErrorsService monthTimetableAndErrorsService) {
+                                                    MonthTimetableAndErrorsService monthTimetableAndErrorsService,
+                                                    RepresentativeLinkService representativeLinkService) {
         this.institutionService = institutionService;
         this.representativeService = representativeService;
         this.monthTimetableService = monthTimetableService;
@@ -43,15 +46,19 @@ public class RegistrationAppMonthTimetablesController {
         this.templateService = templateService;
         this.yearAndMonthService = yearAndMonthService;
         this.monthTimetableAndErrorsService = monthTimetableAndErrorsService;
+        this.representativeLinkService = representativeLinkService;
     }
 
     @GetMapping
     public List<MonthTimetable> showMonthTimetables(@PathVariable String institutionName,
-                                                    @PathVariable String representativeName) {
+                                                                    @PathVariable String representativeName) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableService.findByRepresentativeAndInstitution(representative, institution);
+        List<MonthTimetable> monthTimetables = monthTimetableService
+                .findByRepresentativeAndInstitution(representative, institution);
+        representativeLinkService.addLinksToAllMonthTimetables(monthTimetables, institutionName, representativeName);
+        return monthTimetables;
     }
 
     @GetMapping("/get-next-template")
@@ -63,7 +70,9 @@ public class RegistrationAppMonthTimetablesController {
         MonthTimetable monthTimetable = monthTimetableService
                 .findLastByRepresentativeAndInstitution(representative, institution);
         YearAndMonth yearAndMonth = yearAndMonthService.getYearAndMonth(monthTimetable);
-        return templateService.getNextTemplate(yearAndMonth);
+        Template template = templateService.getNextTemplate(yearAndMonth);
+        representativeLinkService.addLinksToNextTemplate(template, institutionName, representativeName);
+        return template;
     }
 
     @PostMapping("/get-next-template")
@@ -73,7 +82,11 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableAndErrorsService.createOrUpdate(institution, representative, template);
+        MonthTimetableAndErrors timetableAndErrors = monthTimetableAndErrorsService
+                .createOrUpdate(institution, representative, template);
+        representativeLinkService
+                .addLinksToNextTimetableAndErrors(timetableAndErrors, institutionName, representativeName);
+        return timetableAndErrors;
     }
 
     @GetMapping("/{year}")
@@ -83,7 +96,10 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableService.findByRepresentativeAndInstitutionAndYear(representative, institution, year);
+        List<MonthTimetable> monthTimetables = monthTimetableService
+                .findByRepresentativeAndInstitutionAndYear(representative, institution, year);
+        representativeLinkService.addLinksToAllMonthTimetables(monthTimetables, institutionName, representativeName);
+        return monthTimetables;
     }
 
     @GetMapping("/{year}/{month}")
@@ -94,22 +110,35 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableService
+        MonthTimetable monthTimetable = monthTimetableService
                 .findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
+        representativeLinkService
+                .addLinksToMonthTimetable(monthTimetable, institutionName, representativeName, year, month);
+        return monthTimetable;
     }
 
     @GetMapping("/{year}/{month}/get-template")
-    public Template getMonthTemplate(@PathVariable int year, @PathVariable int month) {
-        return templateService.getMonthTemplate(year, month);
+    public Template getMonthTemplate(@PathVariable String institutionName, @PathVariable String representativeName,
+                                     @PathVariable int year, @PathVariable int month) {
+        Template template = templateService.getMonthTemplate(year, month);
+        representativeLinkService.addLinksToMonthTemplate(template, institutionName, representativeName, year, month);
+        return template;
     }
 
     @PostMapping("/{year}/{month}/get-template")
     public MonthTimetableAndErrors updateMonthtimetable(@PathVariable String institutionName,
                                                         @PathVariable String representativeName,
+                                                        @PathVariable int year,
+                                                        @PathVariable int month,
                                                         @RequestBody Template template) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
-        Representative representative = representativeService.findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableAndErrorsService.createOrUpdate(institution, representative, template);
+        Representative representative = representativeService
+                .findByWorkPlacesAndUsername(institution, representativeName);
+        MonthTimetableAndErrors timetableAndErrors = monthTimetableAndErrorsService
+                .createOrUpdate(institution, representative, template);
+        representativeLinkService
+                .addLinksToMonthTimetableAndErrors(template, institutionName, representativeName, year, month);
+        return timetableAndErrors;
     }
 
     @GetMapping("/{year}/{month}/{day}")
@@ -123,21 +152,35 @@ public class RegistrationAppMonthTimetablesController {
                 .findByWorkPlacesAndUsername(institution, representativeName);
         MonthTimetable monthTimetable = monthTimetableService
                 .findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
-        return dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
+        DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
+        representativeLinkService
+                .addLinksToDayTimetable(dayTimetable, institutionName, representativeName, year, month, day);
+        return dayTimetable;
     }
 
     @GetMapping("/{year}/{month}/{day}/get-template")
-    public Template getDayTemplate(@PathVariable int year, @PathVariable int month, @PathVariable int day) {
-        return templateService.getDayTemplate(year, month, day);
+    public Template getDayTemplate(@PathVariable String institutionName, @PathVariable String representativeName,
+                                   @PathVariable int year, @PathVariable int month, @PathVariable int day) {
+        Template template = templateService.getDayTemplate(year, month, day);
+        representativeLinkService.addLinksToDayTemplate(template, institutionName, representativeName, year, month, day);
+        return template;
     }
 
     @PostMapping("/{year}/{month}/{day}/get-template")
     public MonthTimetableAndErrors createDayTimetable(@PathVariable String institutionName,
                                                       @PathVariable String representativeName,
+                                                      @PathVariable int year,
+                                                      @PathVariable int month,
+                                                      @PathVariable int day,
                                                       @RequestBody Template template) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
-        Representative representative = representativeService.findByWorkPlacesAndUsername(institution, representativeName);
-        return monthTimetableAndErrorsService.createOrUpdate(institution, representative, template);
+        Representative representative = representativeService
+                .findByWorkPlacesAndUsername(institution, representativeName);
+        MonthTimetableAndErrors timetableAndErrors = monthTimetableAndErrorsService
+                .createOrUpdate(institution, representative, template);
+        representativeLinkService
+                .addLinksToDayTimetableAndErrors(timetableAndErrors, institutionName, representativeName, year, month, day);
+        return timetableAndErrors;
     }
 
     @GetMapping("/{year}/{month}/{day}/{visitId}")
@@ -150,7 +193,9 @@ public class RegistrationAppMonthTimetablesController {
         MonthTimetable monthTimetable = monthTimetableService
                 .findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
         DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
-        return visitService.findByDayTimetableAndId(dayTimetable, visitId);
+        Visit visit = visitService.findByDayTimetableAndId(dayTimetable, visitId);
+        representativeLinkService.addBackLinks(visit, institutionName, representativeName, year, month, day);
+        return visit;
     }
 
     @PostMapping("/{year}/{month}/{day}/{visitId}")
