@@ -16,6 +16,13 @@ public class Institution extends EntityModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long institutionId;
     private String institutionName;
+    private String province;
+    private String city;
+    private String street;
+    private String gateNumber;
+    private String premisesNumber;
+    private String typeOfService;
+    private String description;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "institutions")
@@ -33,13 +40,6 @@ public class Institution extends EntityModel {
     @OneToMany(mappedBy = "institution")
     private Set<MonthTimetable> monthTimetables = new HashSet<>();
 
-    public Institution() {
-    }
-
-    public Institution(String institutionName) {
-        this.institutionName = institutionName;
-    }
-
     public long getInstitutionId() {
         return institutionId;
     }
@@ -54,6 +54,62 @@ public class Institution extends EntityModel {
 
     public void setInstitutionName(String institutionName) {
         this.institutionName = institutionName;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getGateNumber() {
+        return gateNumber;
+    }
+
+    public void setGateNumber(String gateNumber) {
+        this.gateNumber = gateNumber;
+    }
+
+    public String getPremisesNumber() {
+        return premisesNumber;
+    }
+
+    public void setPremisesNumber(String premisesNumber) {
+        this.premisesNumber = premisesNumber;
+    }
+
+    public String getTypeOfService() {
+        return typeOfService;
+    }
+
+    public void setTypeOfService(String typeOfService) {
+        this.typeOfService = typeOfService;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Set<User> getUsers() {
