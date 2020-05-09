@@ -1,22 +1,19 @@
 package com.zdzimi.registrationapp.controller.user;
 
 import com.zdzimi.registrationapp.model.entities.Institution;
-import com.zdzimi.registrationapp.model.entities.Representative;
 import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.service.UserLinkService;
 import com.zdzimi.registrationapp.service.entities.InstitutionService;
 import com.zdzimi.registrationapp.service.entities.RepresentativeService;
 import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/registration/{username}/institutions")
+@CrossOrigin
 public class RegistrationInstitutions {
 
     private InstitutionService institutionService;

@@ -249,6 +249,6 @@ public class UserLinkService {
     }
 
     private Link getLinkToUser(String username) {
-        return linkTo(RegistrationController.class).slash(username).withRel(username);
+        return linkTo(RegistrationController.class).slash(username).withRel("backToUser");
     }
 }
