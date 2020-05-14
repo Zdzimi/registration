@@ -37,11 +37,11 @@ public class RegistrationVisits {
     public Visit showVisit(@PathVariable String username, @PathVariable long visitId) {
         User user = userService.findUserByUsername(username);
         Visit visit = visitService.findByUserAndId(user, visitId);
-        userLinkService.addLinkToBack(visit, username);
+        userLinkService.addLinkToCancelAndBack(visit, username);
         return visit;
     }
 
-    @PostMapping("/{visitId}")
+    @GetMapping("/{visitId}/cancel")
     public Visit cancelYourVisit(@PathVariable String username, @PathVariable long visitId) {
         User user = userService.findUserByUsername(username);
         return visitService.cancelVisit(user, visitId);

@@ -100,8 +100,8 @@ public class UserLinkService {
         );
     }
 
-    public void addLinkToBack(Visit visit, String username) {
-        visit.add(getLinkToUser(username));
+    public void addLinkToCancelAndBack(Visit visit, String username) {
+        visit.add(getLinkToUser(username), getLinkToCancelVisit(username, visit.getVisitId()));
     }
 
     public void addLinksToBack(Visit bookVisit, String username, String institutionName,
@@ -116,11 +116,20 @@ public class UserLinkService {
 
     public void addLinksToMyVisits(List<Visit> visitList, String username) {
         for (Visit visit : visitList) {
-            visit.add(getLinkToMyVisit(username, visit.getVisitId()));
+            visit.add(getLinkToMyVisits(username, visit.getVisitId()));
         }
     }
 
-    private Link getLinkToMyVisit(String username, long visitId) {
+    private Link getLinkToCancelVisit(String username, long visitId) {
+        return linkTo(RegistrationController.class)
+                .slash(username)
+                .slash("visits")
+                .slash(visitId)
+                .slash("cancel")
+                .withRel("cancel");
+    }
+
+    private Link getLinkToMyVisits(String username, long visitId) {
         return linkTo(RegistrationController.class)
                 .slash(username)
                 .slash("visits")

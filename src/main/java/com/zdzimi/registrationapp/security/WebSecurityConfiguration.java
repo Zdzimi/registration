@@ -34,12 +34,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isCorsRequest).permitAll()
-//                .anyRequest()
-//                .authenticated()
-//                .and().formLogin().defaultSuccessUrl("/app/hello")
-//                .and().httpBasic()
+                .anyRequest()
+                .authenticated()
+                .and().formLogin()
+                .and().httpBasic()
                 .and()
                 .addFilterBefore(new WebSecurityCorsFilter(), ChannelProcessingFilter.class);
     }

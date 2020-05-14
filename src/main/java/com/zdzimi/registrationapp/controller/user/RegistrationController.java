@@ -20,9 +20,14 @@ public class RegistrationController {
         this.userLinkService = userLinkService;
     }
 
-    @PostMapping
+    @PostMapping("/new-user")
     public User createNewUser(@RequestBody User user){
         return userService.save(user);
+    }
+
+    @PostMapping("/update-user")
+    public User updateUser(@RequestBody User newUser){
+        return userService.update(newUser);
     }
 
     @GetMapping("/{username}")

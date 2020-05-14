@@ -1,6 +1,7 @@
 package com.zdzimi.registrationapp.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.zdzimi.registrationapp.model.Role;
 import org.springframework.hateoas.EntityModel;
 
@@ -12,7 +13,6 @@ import java.util.Set;
 @Entity
 public class User extends EntityModel {
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long userId;
@@ -20,8 +20,8 @@ public class User extends EntityModel {
     private String username;
     private String surname;
     private String email;
-    @JsonIgnore
     private String password;
+    private String password2;
     @JsonIgnore
     private Role role;
 
@@ -41,6 +41,7 @@ public class User extends EntityModel {
         this.surname = surname;
         this.email = email;
         this.password = password;
+        this.password2 = password;
         this.role = role;
     }
 
@@ -82,6 +83,14 @@ public class User extends EntityModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPassword2() {
+        return password2;
+    }
+
+    public void setPassword2(String password2) {
+        this.password2 = password2;
     }
 
     public Role getRole() {
