@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.EntityModel;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -15,13 +16,20 @@ public class Institution extends EntityModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long institutionId;
+    @NotNull
     private String institutionName;
+    @NotNull
     private String province;
+    @NotNull
     private String city;
+    @NotNull
     private String street;
+    @NotNull
     private String gateNumber;
     private String premisesNumber;
+    @NotNull
     private String typeOfService;
+    @NotNull
     private String description;
 
     @JsonIgnore

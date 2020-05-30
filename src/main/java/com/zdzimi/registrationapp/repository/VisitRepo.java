@@ -19,4 +19,7 @@ public interface VisitRepo extends JpaRepository<Visit, Long> {
     Optional<Visit> findByUserAndVisitId(User user, long visitId);
 
     Optional<Visit> findByDayTimetableAndVisitId(DayTimetable dayTimetable, long visitId);
+
+    List<Visit> findByDayTimetableAndUser(DayTimetable dayTimetable, User user);
+
 }

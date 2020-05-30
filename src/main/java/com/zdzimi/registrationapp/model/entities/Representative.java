@@ -1,7 +1,7 @@
 package com.zdzimi.registrationapp.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.zdzimi.registrationapp.model.Role;
+import com.zdzimi.registrationapp.security.Role;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -21,8 +21,8 @@ public class Representative extends User{
     public Representative() {
     }
 
-    public Representative(String username, String surname, String email, String password, Role role) {
-        super(username, surname, email, password, role);
+    public Representative(String username, String name, String surname, String email, String password, Role role) {
+        super(username, name, surname, email, password, role);
     }
 
     public Set<Institution> getWorkPlaces() {

@@ -6,10 +6,14 @@ import com.zdzimi.registrationapp.service.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/registration/{username}/institutions/{institutionName}/representatives/{representativeName}/timetables")
+@CrossOrigin
 public class RegistrationMonthTimetable {
 
     private UserService userService;
@@ -51,7 +55,7 @@ public class RegistrationMonthTimetable {
     }
 
     @GetMapping("/{yearMonth}")
-    public MonthTimetable showActualTimetable(@PathVariable String username, @PathVariable String institutionName,
+    public Collection<MonthTimetable> showActualTimetable(@PathVariable String username, @PathVariable String institutionName,
                                               @PathVariable String representativeName, @PathVariable String yearMonth) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
@@ -59,11 +63,11 @@ public class RegistrationMonthTimetable {
         MonthTimetable monthTimetable = monthTimetableService
                 .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
         userLinkService.addLinksToMonthTimetable(monthTimetable, username, institutionName, representativeName, yearMonth);
-        return monthTimetable;
+        return Collections.singleton(monthTimetable);
     }
 
     @GetMapping("/{yearMonth}/{day}")
-    public DayTimetable showActualDayTimetable(@PathVariable String username, @PathVariable String institutionName,
+    public Collection<DayTimetable> showActualDayTimetable(@PathVariable String username, @PathVariable String institutionName,
                                                @PathVariable String representativeName, @PathVariable String yearMonth,
                                                @PathVariable int day) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
@@ -73,13 +77,13 @@ public class RegistrationMonthTimetable {
                 .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
         DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
         userLinkService.addLinksToDayTimetable(dayTimetable, username, institutionName, representativeName, yearMonth, day);
-        return dayTimetable;
+        return Collections.singleton(dayTimetable);
     }
 
     @GetMapping("/{yearMonth}/{day}/{visitId}")
-    public Visit showActualVisit(@PathVariable String username, @PathVariable String institutionName,
-                                 @PathVariable String representativeName, @PathVariable String yearMonth,
-                                 @PathVariable int day, @PathVariable long visitId) {
+    public Set<Visit> showActualVisit(@PathVariable String username, @PathVariable String institutionName,
+                                      @PathVariable String representativeName, @PathVariable String yearMonth,
+                                      @PathVariable int day, @PathVariable long visitId) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
@@ -88,7 +92,7 @@ public class RegistrationMonthTimetable {
         DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
         Visit visit = visitService.findByDayTimetableAndId(dayTimetable, visitId);
         userLinkService.addLinksToVisit(visit, username, institutionName, representativeName, yearMonth, day, visitId);
-        return visit;
+        return Collections.singleton(visit);
     }
 
     @GetMapping("/{yearMonth}/{day}/{visitId}/book")

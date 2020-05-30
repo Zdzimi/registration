@@ -1,11 +1,11 @@
 package com.zdzimi.registrationapp.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.zdzimi.registrationapp.model.Role;
+import com.zdzimi.registrationapp.security.Role;
 import org.springframework.hateoas.EntityModel;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,11 +17,17 @@ public class User extends EntityModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long userId;
 
+    @NotNull
+    @Column(unique = true)
     private String username;
+    @NotNull
+    private String name;
+    @NotNull
     private String surname;
+    @NotNull
     private String email;
+    @NotNull
     private String password;
-    private String password2;
     @JsonIgnore
     private Role role;
 
@@ -36,12 +42,12 @@ public class User extends EntityModel {
     public User() {
     }
 
-    public User(String username, String surname, String email, String password, Role role) {
+    public User(String username, String name, String surname, String email, String password, Role role) {
         this.username = username;
+        this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
-        this.password2 = password;
         this.role = role;
     }
 
@@ -59,6 +65,14 @@ public class User extends EntityModel {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSurname() {
@@ -83,14 +97,6 @@ public class User extends EntityModel {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getPassword2() {
-        return password2;
-    }
-
-    public void setPassword2(String password2) {
-        this.password2 = password2;
     }
 
     public Role getRole() {

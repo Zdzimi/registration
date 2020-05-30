@@ -4,12 +4,13 @@ import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.service.UserLinkService;
 import com.zdzimi.registrationapp.service.entities.InstitutionService;
-import com.zdzimi.registrationapp.service.entities.RepresentativeService;
 import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/registration/{username}/institutions")
@@ -18,17 +19,14 @@ public class RegistrationInstitutions {
 
     private InstitutionService institutionService;
     private UserService userService;
-    private RepresentativeService representativeService;
     private UserLinkService userLinkService;
 
     @Autowired
     public RegistrationInstitutions(InstitutionService institutionService,
                                     UserService userService,
-                                    RepresentativeService representativeService,
                                     UserLinkService userLinkService) {
         this.institutionService = institutionService;
         this.userService = userService;
-        this.representativeService = representativeService;
         this.userLinkService = userLinkService;
     }
 
@@ -48,9 +46,9 @@ public class RegistrationInstitutions {
     }
 
     @GetMapping("/{institutionName}")
-    public Institution showInstitution(@PathVariable String username, @PathVariable String institutionName) {
+    public Set<Institution> showInstitution(@PathVariable String username, @PathVariable String institutionName) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         userLinkService.addLinksToInstitution(institution, username);
-        return institution;
+        return Collections.singleton(institution);
     }
 }

@@ -4,7 +4,12 @@ import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.service.UserLinkService;
 import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/registration")
@@ -26,14 +31,16 @@ public class RegistrationController {
     }
 
     @PostMapping("/update-user")
-    public User updateUser(@RequestBody User newUser){
-        return userService.update(newUser);
+//    @PreAuthorize("targetObject[0].username == principal.username")
+    public User updateUser(@RequestBody User[] users){
+        return userService.update(users);
     }
 
     @GetMapping("/{username}")
-    public User showUser(@PathVariable String username) {
+//    @PostAuthorize("returnObject[0].username == principal.username")
+    public Set<User> showUser(@PathVariable String username) {
         User user = userService.findUserByUsername(username);
         userLinkService.addLinks(user);
-        return user;
+        return Collections.singleton(user);
     }
 }

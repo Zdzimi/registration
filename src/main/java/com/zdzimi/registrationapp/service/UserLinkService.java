@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -51,8 +50,8 @@ public class UserLinkService {
     public void addLinksToRepresentative(Representative representative, String username, String institutionName) {
         representative.add(
                 getLinkToMonthTimetables(username, institutionName, representative.getUsername()),
-                getLinkToUser(username),
-                getLinkToRepresentatives(username, institutionName));
+                getLinkToRepresentatives(username, institutionName),
+                getLinkToUser(username));
     }
 
     public void addLinksToMonthTimetables(List<MonthTimetable> monthTimetableList, String username,
@@ -71,37 +70,37 @@ public class UserLinkService {
             links.add(getLinkToDayTimetable(username,institutionName,representativeName,yearMonth,dayTimetable.getDayOfMonth()));
         }
         monthTimetable.add(links);
-        monthTimetable.add(getLinkToUser(username), getLinkToRepresentatives(username, institutionName));
+        monthTimetable.add(getLinkToRepresentatives(username, institutionName), getLinkToUser(username));
     }
 
     public void addLinksToDayTimetable(DayTimetable dayTimetable, String username, String institutionName,
                                        String representativeName, String yearMonth, int day) {
-        List<Visit> visitList = visitService.findByDayTimetable(dayTimetable);
+        List<Visit> visitList = visitService.findByDayTimetableWithoutUser(dayTimetable);
         List<Link> links = new ArrayList<>();
         for (Visit visit : visitList) {
             links.add(getLinkToVisit(username,institutionName,representativeName,yearMonth,day,visit));
         }
         dayTimetable.add(links);
         dayTimetable.add(
-                getLinkToUser(username),
+                getLinkToMonthTimetable(username, institutionName, representativeName, yearMonth),
                 getLinkToRepresentatives(username, institutionName),
-                getLinkToMonthTimetable(username, institutionName, representativeName, yearMonth)
+                getLinkToUser(username)
         );
     }
 
     public void addLinksToVisit(Visit visit, String username, String institutionName,
                                 String representativeName, String yearMonth, int day, long visitId) {
-        visit.add(getLinkToBookVisit(
-                username, institutionName, representativeName, yearMonth, day, visitId),
-                getLinkToUser(username),
-                getLinkToRepresentatives(username, institutionName),
+        visit.add(
+                getLinkToBookVisit(username, institutionName, representativeName, yearMonth, day, visitId),
+                getLinkToDayTimetable(username, institutionName, representativeName,yearMonth, day),
                 getLinkToMonthTimetable(username, institutionName, representativeName, yearMonth),
-                getLinkToDayTimetable(username, institutionName, representativeName,yearMonth, day)
-        );
+                getLinkToRepresentatives(username, institutionName),
+                getLinkToUser(username)
+                );
     }
 
     public void addLinkToCancelAndBack(Visit visit, String username) {
-        visit.add(getLinkToUser(username), getLinkToCancelVisit(username, visit.getVisitId()));
+        visit.add(getLinkToCancelVisit(username, visit.getVisitId()), getLinkToUser(username));
     }
 
     public void addLinksToBack(Visit bookVisit, String username, String institutionName,
@@ -126,7 +125,7 @@ public class UserLinkService {
                 .slash("visits")
                 .slash(visitId)
                 .slash("cancel")
-                .withRel("cancel");
+                .withRel("rezygnuj");
     }
 
     private Link getLinkToMyVisits(String username, long visitId) {
@@ -205,7 +204,7 @@ public class UserLinkService {
                 .slash("representatives")
                 .slash(representativeName)
                 .slash("timetables")
-                .withRel("timetables");
+                .withRel("kalendarz");
     }
 
     private Link getLinkToRepresentative(String username, String institutionName, String representativeName) {
@@ -224,7 +223,7 @@ public class UserLinkService {
                 .slash("institutions")
                 .slash(institutionName)
                 .slash("representatives")
-                .withRel("representatives");
+                .withRel("nasi pracownicy");
     }
 
     private Link getLinkToInstitution(String username, String institutionName) {
@@ -239,7 +238,7 @@ public class UserLinkService {
         return linkTo(RegistrationController.class)
                 .slash(username)
                 .slash("visits")
-                .withRel("visits");
+                .withRel("wizyty");
     }
 
     private Link getLinkToMyInstitutions(String username) {
@@ -247,17 +246,17 @@ public class UserLinkService {
                 .slash(username)
                 .slash("institutions")
                 .slash("know")
-                .withRel("know");
+                .withRel("lista znanych instytucji");
     }
 
     private Link getLinkToAllInstitutions(String username) {
         return linkTo(RegistrationController.class)
                 .slash(username)
                 .slash("institutions")
-                .withRel("institutions");
+                .withRel("lista instytucji");
     }
 
     private Link getLinkToUser(String username) {
-        return linkTo(RegistrationController.class).slash(username).withRel("backToUser");
+        return linkTo(RegistrationController.class).slash(username).withRel("wróć do panelu głównego");
     }
 }

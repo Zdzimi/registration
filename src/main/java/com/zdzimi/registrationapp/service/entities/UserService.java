@@ -1,7 +1,7 @@
 package com.zdzimi.registrationapp.service.entities;
 
 import com.zdzimi.registrationapp.exception.UserNotFoundException;
-import com.zdzimi.registrationapp.model.Role;
+import com.zdzimi.registrationapp.security.Role;
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.repository.UserRepo;
@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -42,21 +41,26 @@ public class UserService {
     }
 
     public User save(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setPassword2(user.getPassword());
-        user.setRole(Role.ROLE_USER);
-        return userRepo.save(user);
+        User newUser = new User();
+        newUser.setUsername(user.getUsername());
+        newUser.setName(user.getName());
+        newUser.setSurname(user.getSurname());
+        newUser.setEmail(user.getEmail());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        newUser.setRole(Role.ROLE_USER);
+        return userRepo.save(newUser);
     }
 
-    public User update(User newUser) {
-        User oldUser = userRepo.findById(newUser.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("user"));
-        if (passwordEncoder.matches(newUser.getPassword2(), oldUser.getPassword())) {
-            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-            newUser.setPassword2(newUser.getPassword());
-            userRepo.save(newUser);
-            return newUser;
+    public User update(User[] users) {
+        User user = userRepo.findById(users[0].getUserId()).orElseThrow(() -> new UserNotFoundException("user"));
+        if (passwordEncoder.matches(users[0].getPassword(), user.getPassword())) {
+            user.setUsername(users[1].getUsername());
+            user.setName(users[1].getName());
+            user.setSurname(users[1].getSurname());
+            user.setEmail(users[1].getEmail());
+            user.setPassword(passwordEncoder.encode(users[1].getPassword()));
+            userRepo.save(user);
         }
-        return oldUser;
+        return user;
     }
 }

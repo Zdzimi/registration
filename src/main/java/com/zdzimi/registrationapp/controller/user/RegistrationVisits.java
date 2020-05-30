@@ -8,10 +8,13 @@ import com.zdzimi.registrationapp.service.entities.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/registration/{username}/visits")
+@CrossOrigin
 public class RegistrationVisits {
 
     private UserService userService;
@@ -34,11 +37,11 @@ public class RegistrationVisits {
     }
 
     @GetMapping("/{visitId}")
-    public Visit showVisit(@PathVariable String username, @PathVariable long visitId) {
+    public Set<Visit> showVisit(@PathVariable String username, @PathVariable long visitId) {
         User user = userService.findUserByUsername(username);
         Visit visit = visitService.findByUserAndId(user, visitId);
         userLinkService.addLinkToCancelAndBack(visit, username);
-        return visit;
+        return Collections.singleton(visit);
     }
 
     @GetMapping("/{visitId}/cancel")

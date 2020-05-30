@@ -6,15 +6,15 @@ import com.zdzimi.registrationapp.service.UserLinkService;
 import com.zdzimi.registrationapp.service.entities.InstitutionService;
 import com.zdzimi.registrationapp.service.entities.RepresentativeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/registration/{username}/institutions/{institutionName}/representatives")
+@CrossOrigin
 public class RegistrationRepresentatives {
 
     private InstitutionService institutionService;
@@ -39,11 +39,11 @@ public class RegistrationRepresentatives {
     }
 
     @GetMapping("/{representativeName}")
-    public Representative showRepresentative(@PathVariable String username, @PathVariable String institutionName,
-                                             @PathVariable String representativeName) {
+    public Set<Representative> showRepresentative(@PathVariable String username, @PathVariable String institutionName,
+                                                  @PathVariable String representativeName) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService.findByWorkPlacesAndUsername(institution, representativeName);
         userLinkService.addLinksToRepresentative(representative, username, institutionName);
-        return representative;
+        return Collections.singleton(representative);
     }
 }

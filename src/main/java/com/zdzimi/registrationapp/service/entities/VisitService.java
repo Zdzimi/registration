@@ -1,5 +1,6 @@
 package com.zdzimi.registrationapp.service.entities;
 
+import com.zdzimi.registrationapp.comparator.VisitComparator;
 import com.zdzimi.registrationapp.exception.VisitNotFoundException;
 import com.zdzimi.registrationapp.model.entities.*;
 import com.zdzimi.registrationapp.repository.VisitRepo;
@@ -23,11 +24,18 @@ public class VisitService {
 
 
     public List<Visit> findByUser(User user) {
-        return visitRepo.findByUser(user);
+        return visitRepo.findByUser(user)
+                .stream()
+                .sorted(new VisitComparator().reversed())
+                .collect(Collectors.toList());
     }
 
     public List<Visit> findByDayTimetable(DayTimetable dayTimetable) {
         return visitRepo.findByDayTimetable(dayTimetable);
+    }
+
+    public List<Visit> findByDayTimetableWithoutUser(DayTimetable dayTimetable) {
+        return  visitRepo.findByDayTimetableAndUser(dayTimetable, null);
     }
 
     public Visit findByUserAndId(User user, long visitId) {
@@ -72,7 +80,7 @@ public class VisitService {
             visit.setUser(null);
             return visitRepo.save(visit);
         }
-        return null;
+        return visit;
     }
 
     public void deleteByDayTimetableAndId(DayTimetable dayTimetable, long visitId) {
