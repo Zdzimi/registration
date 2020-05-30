@@ -15,6 +15,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/registration-app/{institutionName}/representative")
+@CrossOrigin
 public class RegistrationAppRepresentativeController {
 
     private InstitutionService institutionService;

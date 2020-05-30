@@ -1,5 +1,6 @@
 package com.zdzimi.registrationapp.service;
 
+import com.zdzimi.registrationapp.controller.representative.RegistrationAppController;
 import com.zdzimi.registrationapp.controller.user.RegistrationController;
 import com.zdzimi.registrationapp.model.entities.*;
 import com.zdzimi.registrationapp.service.entities.DayTimetableService;
@@ -28,6 +29,7 @@ public class UserLinkService {
         user.add(getLinkToAllInstitutions(user.getUsername()),
                 getLinkToMyInstitutions(user.getUsername()),
                 getLinkToVisits(user.getUsername()));
+        user.add(getLinkToWorkplaces(user));
     }
 
     public void addLinksToInstitutions(List<Institution> institutionList, String username) {
@@ -117,6 +119,19 @@ public class UserLinkService {
         for (Visit visit : visitList) {
             visit.add(getLinkToMyVisits(username, visit.getVisitId()));
         }
+    }
+
+    private List<Link> getLinkToWorkplaces(User user) {
+        List<Link> links = new ArrayList<>();
+        if (user instanceof Representative) {
+            Set<Institution> workPlaces = ((Representative) user).getWorkPlaces();
+            for (Institution institution : workPlaces) {
+                links.add(linkTo(RegistrationAppController.class)
+                        .slash(institution.getInstitutionName())
+                        .withRel(institution.getInstitutionName()));
+            }
+        }
+        return links;
     }
 
     private Link getLinkToCancelVisit(String username, long visitId) {

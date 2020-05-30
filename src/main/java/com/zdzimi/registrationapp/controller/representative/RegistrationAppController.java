@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/registration-app")
+@CrossOrigin
 public class RegistrationAppController {
 
     private InstitutionService institutionService;

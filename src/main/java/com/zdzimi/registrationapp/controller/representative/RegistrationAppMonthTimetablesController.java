@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/registration-app/{institutionName}/representative/{representativeName}/timetables")
+@CrossOrigin
 public class RegistrationAppMonthTimetablesController {
 
     private InstitutionService institutionService;
