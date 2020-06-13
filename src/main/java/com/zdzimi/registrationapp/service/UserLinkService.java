@@ -5,6 +5,8 @@ import com.zdzimi.registrationapp.controller.user.RegistrationController;
 import com.zdzimi.registrationapp.model.entities.*;
 import com.zdzimi.registrationapp.service.entities.DayTimetableService;
 import com.zdzimi.registrationapp.service.entities.VisitService;
+import com.zdzimi.registrationapp.validator.CancelVisitValidator;
+import com.zdzimi.registrationapp.validator.DeleteOrBookVisitValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
@@ -92,9 +94,11 @@ public class UserLinkService {
 
     public void addLinksToVisit(Visit visit, String username, String institutionName,
                                 String representativeName, String yearMonth, int day, long visitId) {
+        if (new DeleteOrBookVisitValidator(visit).isValid()) {
+            visit.add(getLinkToBookVisit(username, institutionName, representativeName, yearMonth, day, visitId));
+        }
         visit.add(
-                getLinkToBookVisit(username, institutionName, representativeName, yearMonth, day, visitId),
-                getLinkToDayTimetable(username, institutionName, representativeName,yearMonth, day),
+                getLinkBackDayTimetable(username, institutionName, representativeName,yearMonth, day),
                 getLinkToMonthTimetable(username, institutionName, representativeName, yearMonth),
                 getLinkToRepresentatives(username, institutionName),
                 getLinkToUser(username)
@@ -102,22 +106,15 @@ public class UserLinkService {
     }
 
     public void addLinkToCancelAndBack(Visit visit, String username) {
-        visit.add(getLinkToCancelVisit(username, visit.getVisitId()), getLinkToUser(username));
-    }
-
-    public void addLinksToBack(Visit bookVisit, String username, String institutionName,
-                               String representativeName, String yearMonth, int day) {
-        bookVisit.add(
-                getLinkToUser(username),
-                getLinkToRepresentatives(username, institutionName),
-                getLinkToMonthTimetable(username, institutionName, representativeName, yearMonth),
-                getLinkToDayTimetable(username, institutionName, representativeName,yearMonth, day)
-        );
+        if (new CancelVisitValidator(visit).isValid()) {
+            visit.add(getLinkToCancelVisit(username, visit.getVisitId()));
+        }
+        visit.add(getLinkToUser(username));
     }
 
     public void addLinksToMyVisits(List<Visit> visitList, String username) {
         for (Visit visit : visitList) {
-            visit.add(getLinkToMyVisits(username, visit.getVisitId()));
+            visit.add(getLinkToMyVisits(username, visit));
         }
     }
 
@@ -128,10 +125,33 @@ public class UserLinkService {
             for (Institution institution : workPlaces) {
                 links.add(linkTo(RegistrationAppController.class)
                         .slash(institution.getInstitutionName())
-                        .withRel(institution.getInstitutionName()));
+                        .slash("representatives")
+                        .slash(user.getUsername())
+                        .withRel(institution.getInstitutionName() + " - " + user.getUsername()));
             }
         }
         return links;
+    }
+
+    private Link getLinkBackDayTimetable(String username, String institutionName, String representativeName, String yearMonth, int day) {
+        String[] split = yearMonth.split("-");
+        String year = split[0];
+        String month = split[1];
+        return linkTo(RegistrationController.class)
+                .slash(username)
+                .slash("institutions")
+                .slash(institutionName)
+                .slash("representatives")
+                .slash(representativeName)
+                .slash("timetables")
+                .slash(yearMonth)
+                .slash(day)
+                .withRel(String.format(
+                        "%s.%s.%s",
+                        year,
+                        Integer.parseInt(month) < 10 ? String.format("0%s", month) : month,
+                        day < 10 ? String.format("0%d", day) : day
+                ));
     }
 
     private Link getLinkToCancelVisit(String username, long visitId) {
@@ -143,12 +163,21 @@ public class UserLinkService {
                 .withRel("rezygnuj");
     }
 
-    private Link getLinkToMyVisits(String username, long visitId) {
+    private Link getLinkToMyVisits(String username, Visit visit) {
         return linkTo(RegistrationController.class)
                 .slash(username)
                 .slash("visits")
-                .slash(visitId)
-                .withRel("visit no: " + visitId);
+                .slash(visit.getVisitId())
+                .withRel(String.format("%s.%s.%d - %s",
+                        visit.getDayTimetable().getDayOfMonth() < 10
+                                ? String.format("0%d", visit.getDayTimetable().getDayOfMonth())
+                                : visit.getDayTimetable().getDayOfMonth(),
+                        visit.getDayTimetable().getMonthTimetable().getMonth() < 10
+                                ? String.format("0%d", visit.getDayTimetable().getMonthTimetable().getMonth())
+                                : visit.getDayTimetable().getMonthTimetable().getMonth(),
+                        visit.getDayTimetable().getMonthTimetable().getYear(),
+                        visit.getVisitTimeStart())
+                );
     }
 
     private Link getLinkToBookVisit(String username, String institutionName,
@@ -164,7 +193,7 @@ public class UserLinkService {
                 .slash(day)
                 .slash(visitId)
                 .slash("book")
-                .withRel("book");
+                .withRel("rezerwuj");
     }
 
     private Link getLinkToVisit(String username, String institutionName,
@@ -179,9 +208,9 @@ public class UserLinkService {
                 .slash(yearMonth)
                 .slash(day)
                 .slash(visit.getVisitId())
-                .withRel(yearMonth + "-" + day + " - " +
-                        visit.getVisitTimeStart() + " - " +
-                        visit.getVisitTimeStart().plusMinutes(visit.getVisitTimeLength()));
+                .withRel(String.format("%s - %s",
+                        visit.getVisitTimeStart(),
+                        visit.getVisitTimeStart().plusMinutes(visit.getVisitTimeLength())));
     }
 
     private Link getLinkToDayTimetable(String username, String institutionName,
@@ -195,11 +224,14 @@ public class UserLinkService {
                 .slash("timetables")
                 .slash(yearMonth)
                 .slash(dayOfMonth)
-                .withRel(yearMonth + "-" + dayOfMonth);
+                .withRel("" + dayOfMonth);
     }
 
     private Link getLinkToMonthTimetable(String username, String institutionName,
                                          String representativeName, String yearMonth) {
+        String[] split = yearMonth.split("-");
+        String year = split[0];
+        String month = split[1];
         return linkTo(RegistrationController.class)
                 .slash(username)
                 .slash("institutions")
@@ -208,7 +240,7 @@ public class UserLinkService {
                 .slash(representativeName)
                 .slash("timetables")
                 .slash(yearMonth)
-                .withRel(yearMonth);
+                .withRel(String.format("%s.%s", year, Integer.parseInt(month) < 10 ? "0" + month : month));
     }
 
     private Link getLinkToMonthTimetables(String username, String institutionName, String representativeName) {
@@ -271,7 +303,7 @@ public class UserLinkService {
                 .withRel("lista instytucji");
     }
 
-    private Link getLinkToUser(String username) {
+    public Link getLinkToUser(String username) {
         return linkTo(RegistrationController.class).slash(username).withRel("wróć do panelu głównego");
     }
 }

@@ -14,4 +14,6 @@ public interface PlaceRepo extends JpaRepository<Place, Long> {
     List<Place> findByInstitution(Institution institution);
 
     Optional<Place> findByInstitutionAndPlaceName(Institution institution, String placeName);
+
+    Optional<Place> findByInstitutionAndPlaceId(Institution institution, long placeId);
 }

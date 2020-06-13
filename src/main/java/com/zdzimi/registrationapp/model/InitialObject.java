@@ -3,12 +3,12 @@ package com.zdzimi.registrationapp.model;
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Place;
 import com.zdzimi.registrationapp.model.entities.Representative;
+import com.zdzimi.registrationapp.model.entities.User;
 
 public class InitialObject {
 
     private Institution institution;
-    private Representative representative;
-    private Place place;
+    private User user;
 
     public Institution getInstitution() {
         return institution;
@@ -18,19 +18,11 @@ public class InitialObject {
         this.institution = institution;
     }
 
-    public Representative getRepresentative() {
-        return representative;
+    public User getUser() {
+        return user;
     }
 
-    public void setRepresentative(Representative representative) {
-        this.representative = representative;
-    }
-
-    public Place getPlace() {
-        return place;
-    }
-
-    public void setPlace(Place place) {
-        this.place = place;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

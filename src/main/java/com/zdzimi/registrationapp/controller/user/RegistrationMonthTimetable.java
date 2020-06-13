@@ -110,8 +110,6 @@ public class RegistrationMonthTimetable {
                 .findActualByRepresentativeInstitutionAndYearMonth(representative, institution, yearMonth);
         DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
         Visit visit = visitService.findByDayTimetableAndId(dayTimetable, visitId);
-        Visit bookVisit = visitService.bookVisit(visit, user, institution);
-        userLinkService.addLinksToBack(bookVisit, username, institutionName, representativeName, yearMonth, day);
-        return bookVisit;
+        return visitService.bookVisit(visit, user, institution);
     }
 }

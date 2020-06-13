@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -32,34 +33,68 @@ public class DayTimetableAndErrorsService {
     public DayTimetableAndErrors createOrUpdate(Day day, MonthTimetable monthTimetable, long visitTime) {
         DayTimetable dayTimetable = dayTimetableService.getOrCreate(day.getDayNumber(), monthTimetable);
 
-        Place place = placeService.findByInstitutionAndPlaceName(monthTimetable.getInstitution(), day.getPlaceName());
-
-        LocalTime timeWorkStart = day.getTimeStart();
-        LocalTime timeWorkEnd = day.getTimeEnd();
+        Optional<Place> place = placeService
+                .getPlaceByInstitutionAndPlaceName(monthTimetable.getInstitution(), day.getPlaceName());
 
         DayTimetableAndErrors dayTimetableAndErrors = new DayTimetableAndErrors(day.getDayNumber());
 
-        Set<Visit> visitSetByPlaceAndDay = getVisitListFromPlaceAndDay(dayTimetable, place);
-        Set<Visit> visitSetByRepresentativeAndDay = dayTimetable.getVisits();
+        if (place.isPresent()) {
+            LocalTime timeWorkStart = day.getTimeStart();
+            LocalTime timeWorkEnd = day.getTimeEnd();
 
-        while (timeWorkStart.isBefore(timeWorkEnd)) {
-            VisitValidator placeBookedValidator = new VisitValidator(visitSetByPlaceAndDay, timeWorkStart, visitTime);
-            VisitValidator representativeValidator = new VisitValidator(visitSetByRepresentativeAndDay, timeWorkStart, visitTime);
+            Set<Visit> visitSetByPlaceAndDay = getVisitListFromPlaceAndDay(dayTimetable, place.get());
+            Set<Visit> visitSetByRepresentativeAndDay = dayTimetable.getVisits();
 
-            if (placeBookedValidator.isValid() && representativeValidator.isValid()){
-                Visit visit = new Visit(timeWorkStart, visitTime, dayTimetable, place);
-                visitService.save(visit);
-                dayTimetableAndErrors.getVisits().add(visit);
-            }else {
-                if (!placeBookedValidator.isValid()) {
-                    dayTimetableAndErrors.getErrors().add("Place " + day.getPlaceName() + " is booked "
-                            + day.getDayNumber() + " - " + timeWorkStart + " - " + timeWorkStart.plusMinutes(visitTime));
+            while (timeWorkStart.isBefore(timeWorkEnd)) {
+                VisitValidator placeBookedValidator = new VisitValidator(visitSetByPlaceAndDay, timeWorkStart, visitTime);
+                VisitValidator representativeValidator = new VisitValidator(visitSetByRepresentativeAndDay, timeWorkStart, visitTime);
+
+                if (placeBookedValidator.isValid() && representativeValidator.isValid()){
+                    Visit visit = new Visit(timeWorkStart, visitTime, dayTimetable, place.get());
+                    visitService.save(visit);
+                    dayTimetableAndErrors.getVisits().add(visit);
+                }else {
+                    if (!placeBookedValidator.isValid()) {
+                        dayTimetableAndErrors.getErrors().add(String.format(
+                                "Stamowisko %s jest już zarezerwowane %s.%s.%dr. - %s - %s",
+                                day.getPlaceName(),
+                                dayTimetable.getDayOfMonth() < 10
+                                        ? String.format("0%d", dayTimetable.getDayOfMonth())
+                                        : dayTimetable.getDayOfMonth(),
+                                dayTimetable.getMonthTimetable().getMonth() < 10
+                                        ? String.format("0%d", dayTimetable.getMonthTimetable().getMonth())
+                                        : dayTimetable.getMonthTimetable().getMonth(),
+                                dayTimetable.getMonthTimetable().getYear(),
+                                timeWorkStart,
+                                timeWorkStart.plusMinutes(visitTime)));
+                    }
+                    if (!representativeValidator.isValid()) {
+                        dayTimetableAndErrors.getErrors().add(String.format(
+                                        "%s - %s.%s.%dr. - masz już wizytę w tym czasie",
+                                        timeWorkStart,
+                                dayTimetable.getDayOfMonth() < 10
+                                        ? String.format("0%d", dayTimetable.getDayOfMonth())
+                                        : dayTimetable.getDayOfMonth(),
+                                dayTimetable.getMonthTimetable().getMonth() < 10
+                                        ? String.format("0%d", dayTimetable.getMonthTimetable().getMonth())
+                                        : dayTimetable.getMonthTimetable().getMonth(),
+                                        dayTimetable.getMonthTimetable().getYear()
+                        ));
+                    }
                 }
-                if (!representativeValidator.isValid()) {
-                    dayTimetableAndErrors.getErrors().add("You can't be in two places in the same time...");
-                }
+                timeWorkStart = timeWorkStart.plusMinutes(visitTime);
             }
-            timeWorkStart = timeWorkStart.plusMinutes(visitTime);
+        } else {
+            dayTimetableAndErrors.getErrors().add(String.format(
+                    "%s.%s.%dr. - dzień wolny",
+                    dayTimetable.getDayOfMonth() < 10
+                            ? String.format("0%d", dayTimetable.getDayOfMonth())
+                            : dayTimetable.getDayOfMonth(),
+                    dayTimetable.getMonthTimetable().getMonth() < 10
+                            ? String.format("0%d", dayTimetable.getMonthTimetable().getMonth())
+                            : dayTimetable.getMonthTimetable().getMonth(),
+                    dayTimetable.getMonthTimetable().getYear()
+            ));
         }
         return dayTimetableAndErrors;
     }

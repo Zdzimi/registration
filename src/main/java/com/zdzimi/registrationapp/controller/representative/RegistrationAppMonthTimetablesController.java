@@ -12,10 +12,12 @@ import com.zdzimi.registrationapp.service.template.YearAndMonthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/registration-app/{institutionName}/representative/{representativeName}/timetables")
+@RequestMapping("/registration-app/{institutionName}/representatives/{representativeName}/timetables")
 @CrossOrigin
 public class RegistrationAppMonthTimetablesController {
 
@@ -50,7 +52,7 @@ public class RegistrationAppMonthTimetablesController {
         this.representativeLinkService = representativeLinkService;
     }
 
-    @GetMapping
+    @GetMapping//ok
     public List<MonthTimetable> showMonthTimetables(@PathVariable String institutionName,
                                                                     @PathVariable String representativeName) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
@@ -63,8 +65,8 @@ public class RegistrationAppMonthTimetablesController {
     }
 
     @GetMapping("/get-next-template")
-    public Template getNextTemplate(@PathVariable String institutionName,
-                                    @PathVariable String representativeName) {
+    public Set<Template> getNextTemplate(@PathVariable String institutionName,
+                                         @PathVariable String representativeName) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
@@ -73,7 +75,7 @@ public class RegistrationAppMonthTimetablesController {
         YearAndMonth yearAndMonth = yearAndMonthService.getYearAndMonth(monthTimetable);
         Template template = templateService.getNextTemplate(yearAndMonth);
         representativeLinkService.addLinksToNextTemplate(template, institutionName, representativeName);
-        return template;
+        return Collections.singleton(template);
     }
 
     @PostMapping("/get-next-template")
@@ -83,14 +85,11 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        MonthTimetableAndErrors timetableAndErrors = monthTimetableAndErrorsService
+        return monthTimetableAndErrorsService
                 .createOrUpdate(institution, representative, template);
-        representativeLinkService
-                .addLinksToNextTimetableAndErrors(timetableAndErrors, institutionName, representativeName);
-        return timetableAndErrors;
     }
 
-    @GetMapping("/{year}")
+    @GetMapping("/y/{year}")
     public List<MonthTimetable> showMonthTimetablesByYear(@PathVariable String institutionName,
                                                           @PathVariable String representativeName,
                                                           @PathVariable int year) {
@@ -103,11 +102,11 @@ public class RegistrationAppMonthTimetablesController {
         return monthTimetables;
     }
 
-    @GetMapping("/{year}/{month}")
-    public MonthTimetable showMonthTimetablesByYearAndMonth(@PathVariable String institutionName,
-                                                            @PathVariable String representativeName,
-                                                            @PathVariable int year,
-                                                            @PathVariable int month) {
+    @GetMapping("/y/{year}/m/{month}")
+    public Set<MonthTimetable> showMonthTimetablesByYearAndMonth(@PathVariable String institutionName,
+                                                                 @PathVariable String representativeName,
+                                                                 @PathVariable int year,
+                                                                 @PathVariable int month) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
@@ -115,18 +114,18 @@ public class RegistrationAppMonthTimetablesController {
                 .findByRepresentativeAndInstitutionAndYearAndMonth(representative, institution, year, month);
         representativeLinkService
                 .addLinksToMonthTimetable(monthTimetable, institutionName, representativeName, year, month);
-        return monthTimetable;
+        return Collections.singleton(monthTimetable);
     }
 
-    @GetMapping("/{year}/{month}/get-template")
-    public Template getMonthTemplate(@PathVariable String institutionName, @PathVariable String representativeName,
-                                     @PathVariable int year, @PathVariable int month) {
+    @GetMapping("/y/{year}/m/{month}/get-template")
+    public Set<Template> getMonthTemplate(@PathVariable String institutionName, @PathVariable String representativeName,
+                                          @PathVariable int year, @PathVariable int month) {
         Template template = templateService.getMonthTemplate(year, month);
         representativeLinkService.addLinksToMonthTemplate(template, institutionName, representativeName, year, month);
-        return template;
+        return Collections.singleton(template);
     }
 
-    @PostMapping("/{year}/{month}/get-template")
+    @PostMapping("/y/{year}/m/{month}/get-template")
     public MonthTimetableAndErrors updateMonthtimetable(@PathVariable String institutionName,
                                                         @PathVariable String representativeName,
                                                         @PathVariable int year,
@@ -135,19 +134,16 @@ public class RegistrationAppMonthTimetablesController {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        MonthTimetableAndErrors timetableAndErrors = monthTimetableAndErrorsService
+        return monthTimetableAndErrorsService
                 .createOrUpdate(institution, representative, template);
-        representativeLinkService
-                .addLinksToMonthTimetableAndErrors(template, institutionName, representativeName, year, month);
-        return timetableAndErrors;
     }
 
-    @GetMapping("/{year}/{month}/{day}")
-    public DayTimetable showDayTimetable(@PathVariable String institutionName,
-                                         @PathVariable String representativeName,
-                                         @PathVariable int year,
-                                         @PathVariable int month,
-                                         @PathVariable int day) {
+    @GetMapping("/y/{year}/m/{month}/d/{day}")
+    public Set<DayTimetable> showDayTimetable(@PathVariable String institutionName,
+                                              @PathVariable String representativeName,
+                                              @PathVariable int year,
+                                              @PathVariable int month,
+                                              @PathVariable int day) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
@@ -156,38 +152,31 @@ public class RegistrationAppMonthTimetablesController {
         DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
         representativeLinkService
                 .addLinksToDayTimetable(dayTimetable, institutionName, representativeName, year, month, day);
-        return dayTimetable;
+        return Collections.singleton(dayTimetable);
     }
 
-    @GetMapping("/{year}/{month}/{day}/get-template")
-    public Template getDayTemplate(@PathVariable String institutionName, @PathVariable String representativeName,
-                                   @PathVariable int year, @PathVariable int month, @PathVariable int day) {
+    @GetMapping("/y/{year}/m/{month}/d/{day}/get-template")
+    public Set<Template> getDayTemplate(@PathVariable String institutionName, @PathVariable String representativeName,
+                                        @PathVariable int year, @PathVariable int month, @PathVariable int day) {
         Template template = templateService.getDayTemplate(year, month, day);
         representativeLinkService.addLinksToDayTemplate(template, institutionName, representativeName, year, month, day);
-        return template;
+        return Collections.singleton(template);
     }
 
-    @PostMapping("/{year}/{month}/{day}/get-template")
+    @PostMapping("/y/{year}/m/{month}/d/{day}/get-template")
     public MonthTimetableAndErrors createDayTimetable(@PathVariable String institutionName,
                                                       @PathVariable String representativeName,
-                                                      @PathVariable int year,
-                                                      @PathVariable int month,
-                                                      @PathVariable int day,
                                                       @RequestBody Template template) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
-        MonthTimetableAndErrors timetableAndErrors = monthTimetableAndErrorsService
-                .createOrUpdate(institution, representative, template);
-        representativeLinkService
-                .addLinksToDayTimetableAndErrors(timetableAndErrors, institutionName, representativeName, year, month, day);
-        return timetableAndErrors;
+        return monthTimetableAndErrorsService.createOrUpdate(institution, representative, template);
     }
 
-    @GetMapping("/{year}/{month}/{day}/{visitId}")
-    public Visit showVisit(@PathVariable String institutionName, @PathVariable String representativeName,
-                           @PathVariable int year, @PathVariable int month,
-                           @PathVariable int day, @PathVariable long visitId) {
+    @GetMapping("/y/{year}/m/{month}/d/{day}/v/{visitId}")
+    public Set<Visit> showVisit(@PathVariable String institutionName, @PathVariable String representativeName,
+                                @PathVariable int year, @PathVariable int month,
+                                @PathVariable int day, @PathVariable long visitId) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService
                 .findByWorkPlacesAndUsername(institution, representativeName);
@@ -196,10 +185,10 @@ public class RegistrationAppMonthTimetablesController {
         DayTimetable dayTimetable = dayTimetableService.findByMonthTimetableAndDayOfMonth(monthTimetable, day);
         Visit visit = visitService.findByDayTimetableAndId(dayTimetable, visitId);
         representativeLinkService.addBackLinks(visit, institutionName, representativeName, year, month, day);
-        return visit;
+        return Collections.singleton(visit);
     }
 
-    @PostMapping("/{year}/{month}/{day}/{visitId}")
+    @DeleteMapping("/y/{year}/m/{month}/d/{day}/v/{visitId}")
     public void deleteVisit(@PathVariable String institutionName, @PathVariable String representativeName,
                             @PathVariable int year, @PathVariable int month,
                             @PathVariable int day, @PathVariable long visitId) {

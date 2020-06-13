@@ -12,11 +12,11 @@ import java.util.Set;
 @Entity
 public class Institution extends EntityModel {
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long institutionId;
     @NotNull
+    @Column(unique = true)
     private String institutionName;
     @NotNull
     private String province;

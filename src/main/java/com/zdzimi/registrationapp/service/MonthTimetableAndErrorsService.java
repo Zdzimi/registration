@@ -37,10 +37,12 @@ public class MonthTimetableAndErrorsService {
         List<Day> days = template.getDays();
         long visitTime = template.getVisitTime();
 
-        for (Day day : days) {
-            DayTimetableAndErrors dayTimetableAndErrors = dayTimetableAndErrorsService
-                    .createOrUpdate(day, monthTimetable, visitTime);
-            monthTimetableAndErrors.getDayTimetableAndErrors().add(dayTimetableAndErrors);
+        if (visitTime > 0) {
+            for (Day day : days) {
+                DayTimetableAndErrors dayTimetableAndErrors = dayTimetableAndErrorsService
+                        .createOrUpdate(day, monthTimetable, visitTime);
+                monthTimetableAndErrors.getDayTimetableAndErrors().add(dayTimetableAndErrors);
+            }
         }
         return monthTimetableAndErrors;
     }

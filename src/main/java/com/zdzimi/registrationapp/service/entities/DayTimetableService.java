@@ -1,5 +1,6 @@
 package com.zdzimi.registrationapp.service.entities;
 
+import com.zdzimi.registrationapp.comparator.DayTimetableComparator;
 import com.zdzimi.registrationapp.exception.DayTimetableNotFoundException;
 import com.zdzimi.registrationapp.model.entities.DayTimetable;
 import com.zdzimi.registrationapp.model.entities.MonthTimetable;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DayTimetableService {
@@ -20,7 +22,9 @@ public class DayTimetableService {
     }
 
     public List<DayTimetable> findByMonthTimetable(MonthTimetable monthTimetable) {
-        return dayTimetableRepo.findByMonthTimetable(monthTimetable);
+        return dayTimetableRepo.findByMonthTimetable(monthTimetable).stream()
+                .sorted(new DayTimetableComparator())
+                .collect(Collectors.toList());
     }
 
     public DayTimetable findByMonthTimetableAndDayOfMonth(MonthTimetable monthTimetable, int day) {

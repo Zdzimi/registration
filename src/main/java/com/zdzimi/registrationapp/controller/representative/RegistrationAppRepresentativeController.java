@@ -2,6 +2,7 @@ package com.zdzimi.registrationapp.controller.representative;
 
 import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Representative;
+import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.service.RepresentativeLinkService;
 import com.zdzimi.registrationapp.service.entities.InstitutionService;
 import com.zdzimi.registrationapp.service.entities.RepresentativeService;
@@ -9,12 +10,12 @@ import com.zdzimi.registrationapp.service.entities.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/registration-app/{institutionName}/representative")
+@RequestMapping("/registration-app/{institutionName}/representatives")
 @CrossOrigin
 public class RegistrationAppRepresentativeController {
 
@@ -46,17 +47,18 @@ public class RegistrationAppRepresentativeController {
     public Representative addRepresentative(@PathVariable String institutionName,
                                             @RequestBody String representativeName) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
-        Representative representative = (Representative) userService.findUserByUsername(representativeName);
+        User user = userService.findUserByUsername(representativeName);
+        Representative representative = representativeService.getRepresentativeByUser(user);
         representative.getWorkPlaces().add(institution);
         return representativeService.save(representative);
     }
 
     @GetMapping("/{representativeName}")
-    public Representative findRepresentative(@PathVariable String institutionName,
-                                             @PathVariable String representativeName) {
+    public Set<Representative> findRepresentative(@PathVariable String institutionName,
+                                                  @PathVariable String representativeName) {
         Institution institution = institutionService.findByInstitutionName(institutionName);
         Representative representative = representativeService.findByWorkPlacesAndUsername(institution, representativeName);
         representativeLinkService.addLinksRepresentative(representative, institutionName);
-        return representative;
+        return Collections.singleton(representative);
     }
 }
