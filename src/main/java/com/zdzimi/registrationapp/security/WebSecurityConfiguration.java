@@ -46,11 +46,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .fullyAuthenticated()
 //                .and()
                 .authorizeRequests()
-//                .antMatchers("/registration/new-user")
-//                .permitAll()
+                .antMatchers("/registration/new-user")
+                .permitAll()
                 .anyRequest()
-//                .fullyAuthenticated()
-                .permitAll()    //  to delete
+                .fullyAuthenticated()
+//                .permitAll()    //  to delete
                 .and()
                 .httpBasic();
 //                .and()

@@ -8,10 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -42,7 +43,7 @@ class InstitutionServiceTest {
         //given
         Institution institution = new Institution();
         institution.setInstitutionId(1);
-        when(repo.findAll()).thenReturn(newArrayList(institution));
+        when(repo.findAll()).thenReturn(Collections.singletonList(institution));
         //when
         List<Institution> result = service.findAll();
         //then
@@ -106,7 +107,7 @@ class InstitutionServiceTest {
         institution.setInstitutionId(1);
         User user = new User();
         user.setEmail(USER_EMAIL_COM);
-        when(repo.findByUsers(user)).thenReturn(newArrayList(institution));
+        when(repo.findByUsers(user)).thenReturn(Arrays.asList(institution));
         //when
         List<Institution> result = service.findByUsers(user);
         //then
