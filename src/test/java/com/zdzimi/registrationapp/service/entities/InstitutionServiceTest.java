@@ -5,6 +5,7 @@ import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.repository.InstitutionRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -76,6 +77,23 @@ class InstitutionServiceTest {
         //then
         assertEquals("Could not find institution: " + INSTITUTION_NAME, exception.getMessage());
         verify(repo, times(1)).findByInstitutionName(INSTITUTION_NAME);
+        verifyNoMoreInteractions(repo);
+    }
+    
+    @Test
+    void shouldSaveInstitution() {
+        //given
+        Institution institutionBeforeSave = new Institution();
+        institutionBeforeSave.setInstitutionName(INSTITUTION_NAME);
+        Institution institutionAfterSave = new Institution();
+        institutionAfterSave.setInstitutionId(1);
+        institutionAfterSave.setInstitutionName(INSTITUTION_NAME);
+        when(repo.save(ArgumentMatchers.any(Institution.class))).thenReturn(institutionAfterSave);
+        //when
+        Institution result = service.save(institutionBeforeSave);
+        //then
+        assertEquals(institutionAfterSave, result);
+        verify(repo, times(1)).save(institutionBeforeSave);
         verifyNoMoreInteractions(repo);
     }
 }
