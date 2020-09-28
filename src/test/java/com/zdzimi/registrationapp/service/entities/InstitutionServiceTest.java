@@ -2,6 +2,7 @@ package com.zdzimi.registrationapp.service.entities;
 
 import com.zdzimi.registrationapp.exception.InstitutionNotFoundException;
 import com.zdzimi.registrationapp.model.entities.Institution;
+import com.zdzimi.registrationapp.model.entities.User;
 import com.zdzimi.registrationapp.repository.InstitutionRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 class InstitutionServiceTest {
     
     private static final String INSTITUTION_NAME = "name";
+    private static final String USER_EMAIL_COM = "user@email.com";
     
     private InstitutionService service;
     
@@ -94,6 +96,23 @@ class InstitutionServiceTest {
         //then
         assertEquals(institutionAfterSave, result);
         verify(repo, times(1)).save(institutionBeforeSave);
+        verifyNoMoreInteractions(repo);
+    }
+    
+    @Test
+    void shouldFindByUser() {
+        //given
+        Institution institution = new Institution();
+        institution.setInstitutionId(1);
+        User user = new User();
+        user.setEmail(USER_EMAIL_COM);
+        when(repo.findByUsers(user)).thenReturn(newArrayList(institution));
+        //when
+        List<Institution> result = service.findByUsers(user);
+        //then
+        assertEquals(1, result.size());
+        assertEquals(institution, result.get(0));
+        verify(repo, times(1)).findByUsers(user);
         verifyNoMoreInteractions(repo);
     }
 }
