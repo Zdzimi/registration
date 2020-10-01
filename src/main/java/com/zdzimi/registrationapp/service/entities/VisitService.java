@@ -9,7 +9,6 @@ import com.zdzimi.registrationapp.validator.DeleteOrBookVisitValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -89,13 +88,6 @@ public class VisitService {
 
     private void delete(Visit visit) {
         visitRepo.delete(visit);
-    }
-
-    public LocalDate getFullDate(Visit visit) {
-        int dayOfMonth = visit.getDayTimetable().getDayOfMonth();
-        int month = visit.getDayTimetable().getMonthTimetable().getMonth();
-        int year = visit.getDayTimetable().getMonthTimetable().getYear();
-        return LocalDate.of(year,month,dayOfMonth);
     }
 
     public List<Visit> findByUserAndInstitution(User user, Institution institution) {

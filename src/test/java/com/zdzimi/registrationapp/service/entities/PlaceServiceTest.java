@@ -24,14 +24,12 @@ class PlaceServiceTest {
 
     private PlaceService placeService;
     private PlaceRepo placeRepo;
-    private VisitService visitService;
 
     @BeforeEach
     void setUp() {
         placeRepo = mock(PlaceRepo.class);
-        visitService = mock(VisitService.class);
         initMocks(this);
-        placeService = new PlaceService(placeRepo, visitService);
+        placeService = new PlaceService(placeRepo);
     }
 
     @Test
@@ -39,7 +37,7 @@ class PlaceServiceTest {
         //  given
         Institution institution = new Institution();
         Place place = new Place();
-        place.setPlaceId(1);
+        place.setPlaceId(PLACE_ID);
         place.setInstitution(institution);
         place.setPlaceName(PLACE_NAME);
         when(placeRepo.findByInstitutionAndPlaceName(institution, PLACE_NAME)).thenReturn(Optional.of(place));
@@ -71,14 +69,14 @@ class PlaceServiceTest {
         //  given
         Institution institution = new Institution();
         Place place = new Place();
-        place.setPlaceId(1);
+        place.setPlaceId(PLACE_ID);
         place.setInstitution(institution);
         place.setPlaceName(PLACE_NAME);
         when(placeRepo.findByInstitutionAndPlaceName(institution, PLACE_NAME)).thenReturn(Optional.of(place));
         //  when
         Optional<Place> result = placeService.getPlaceByInstitutionAndPlaceName(institution, PLACE_NAME);
         //  then
-        assertEquals(1, result.get().getPlaceId());
+        assertEquals(PLACE_ID, result.get().getPlaceId());
         assertEquals(PLACE_NAME, result.get().getPlaceName());
         verify(placeRepo, times(1)).findByInstitutionAndPlaceName(institution, PLACE_NAME);
         verifyNoMoreInteractions(placeRepo);
@@ -105,7 +103,7 @@ class PlaceServiceTest {
         //  given
         Place placeBeforeSave = new Place();
         Place placeAfterSave = new Place();
-        placeAfterSave.setPlaceId(1);
+        placeAfterSave.setPlaceId(PLACE_ID);
         placeAfterSave.setPlaceName(PLACE_NAME);
         when(placeRepo.save(ArgumentMatchers.any(Place.class))).thenReturn(placeAfterSave);
         //  when
@@ -129,17 +127,17 @@ class PlaceServiceTest {
         //  given
         Institution institution = new Institution();
         Place place = new Place();
-        place.setPlaceId(1);
+        place.setPlaceId(PLACE_ID);
         place.setInstitution(institution);
         place.setPlaceName(PLACE_NAME);
-        when(placeRepo.findByInstitutionAndPlaceId(institution, 1)).thenReturn(Optional.of(place));
+        when(placeRepo.findByInstitutionAndPlaceId(institution, PLACE_ID)).thenReturn(Optional.of(place));
         //  when
-        Place result = placeService.findByInstitutionAndPlaceId(institution, 1);
+        Place result = placeService.findByInstitutionAndPlaceId(institution, PLACE_ID);
         //  then
         assertEquals(place, result);
-        assertEquals(1, result.getPlaceId());
+        assertEquals(PLACE_ID, result.getPlaceId());
         assertEquals(PLACE_NAME, result.getPlaceName());
-        verify(placeRepo, times(1)).findByInstitutionAndPlaceId(institution, 1);
+        verify(placeRepo, times(1)).findByInstitutionAndPlaceId(institution, PLACE_ID);
         verifyNoMoreInteractions(placeRepo);
     }
 
@@ -150,7 +148,8 @@ class PlaceServiceTest {
         institution.setInstitutionName(INSTITUTION_NAME);
         when(placeRepo.findByInstitutionAndPlaceId(institution, 1)).thenReturn(Optional.empty());
         //  when
-        PlaceNotFoundException exception = assertThrows(PlaceNotFoundException.class, () -> placeService.findByInstitutionAndPlaceId(institution, 1));
+        PlaceNotFoundException exception = assertThrows(PlaceNotFoundException.class,
+                () -> placeService.findByInstitutionAndPlaceId(institution, PLACE_ID));
         //  then
         assertEquals("Could not find place: " + PLACE_ID + " from " + INSTITUTION_NAME, exception.getMessage());
         verify(placeRepo, times(1)).findByInstitutionAndPlaceId(institution,PLACE_ID);
