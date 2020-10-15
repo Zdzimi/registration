@@ -16,7 +16,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
-//@Order(SecurityProperties.BASIC_AUTH_ORDER)
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -40,20 +39,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors();
         http
                 .csrf().disable()
-//                .authorizeRequests()
-//                .requestMatchers(CorsUtils::isCorsRequest)
-//                .fullyAuthenticated()
-//                .and()
                 .authorizeRequests()
-//                .antMatchers("/registration/new-user")
-//                .permitAll()
+                .antMatchers("/registration/new-user")
+                .permitAll()
                 .anyRequest()
-//                .fullyAuthenticated()
-                .permitAll()    //  to delete
+                .fullyAuthenticated()
                 .and()
                 .httpBasic();
-//                .and()
-//                .addFilterBefore(new WebSecurityCorsFilter(), ChannelProcessingFilter.class);
     }
     
     @Bean
