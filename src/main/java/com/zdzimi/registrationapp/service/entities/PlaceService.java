@@ -5,6 +5,8 @@ import com.zdzimi.registrationapp.model.entities.Institution;
 import com.zdzimi.registrationapp.model.entities.Place;
 import com.zdzimi.registrationapp.model.entities.Visit;
 import com.zdzimi.registrationapp.repository.PlaceRepo;
+import com.zdzimi.registrationapp.validator.DeletePlaceValidator;
+import com.zdzimi.registrationapp.validator.RegistrationAppValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +19,10 @@ import java.util.stream.Collectors;
 public class PlaceService {
 
     private PlaceRepo placeRepo;
-    private VisitService visitService;
 
     @Autowired
-    public PlaceService(PlaceRepo placeRepo, VisitService visitService) {
+    public PlaceService(PlaceRepo placeRepo) {
         this.placeRepo = placeRepo;
-        this.visitService = visitService;
     }
 
     public Place findByInstitutionAndPlaceName(Institution institution, String placeName) {
@@ -42,17 +42,16 @@ public class PlaceService {
         return placeRepo.save(place);
     }
 
-    public void delete(Institution institution, String placeName) {
+    public void delete(Institution institution, String placeName) { //  todo - create DeletePlaceValidator
         Place place = findByInstitutionAndPlaceName(institution, placeName);
-        List<Visit> visitList = place.getVisits().stream()
-                .filter(visit -> visitService.getFullDate(visit).isAfter(LocalDate.now()))
-                .collect(Collectors.toList());
-        if (visitList.isEmpty()) {
+        RegistrationAppValidator validator = new DeletePlaceValidator(place);
+        if (validator.isValid()) {
             placeRepo.delete(place);
         }
     }
 
     public Place findByInstitutionAndPlaceId(Institution institution, long placeId) {
-        return placeRepo.findByInstitutionAndPlaceId(institution, placeId).orElseThrow(() -> new PlaceNotFoundException(""));
+        return placeRepo.findByInstitutionAndPlaceId(institution, placeId)
+                .orElseThrow(() -> new PlaceNotFoundException(institution.getInstitutionName(),placeId));
     }
 }

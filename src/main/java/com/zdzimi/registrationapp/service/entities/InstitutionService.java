@@ -32,7 +32,7 @@ public class InstitutionService {
         return institutionRepo.save(institution);
     }
 
-    public List<Institution> findByUsers(User user) {
+    public List<Institution> findByUsers(User user) { //TODO findByUsers suggests that we are using more than 1 user as a parameters -> better name would be findByUser
         return institutionRepo.findByUsers(user);
     }
 }
